@@ -13,4 +13,4 @@ task.wait(2.5)
 print("System: Layer 1 Cleared. Loading Proxy...")
 
 -- CARGA EL ANILLO 2 (Bypass de Metatable)
-loadstring(game:HttpGet("https://tu-link-privado.com/anillo2.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/zhubx2867-beep/Proyectos-X/refs/heads/main/anillo%20v2"))()
