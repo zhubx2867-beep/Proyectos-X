@@ -1,0 +1,25 @@
+-- ANILLO 4: EL BUENO (EL CORAZON DE LA Z)
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+    Name = "Z-SQUAD: OPERATIVO FINAL 🇲🇽",
+    LoadingTitle = "Anillos de Seguridad Activos",
+    LoadingSubtitle = "By Z-Squad Team"
+})
+
+local Tab = Window:CreateTab("Combate Z", 4483362458)
+
+Tab:CreateButton({
+    Name = "Activar BodyMod & Hitbox (Invisible)",
+    Callback = function()
+        -- Aquí metes tu código pesado
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= game.Players.LocalPlayer and v.Character then
+                pcall(function()
+                    v.Character.Head.Size = Vector3.new(10, 10, 10)
+                    v.Character.Head.CanCollide = false
+                end)
+            end
+        end
+        Rayfield:Notify({Title = "PODER TOTAL", Content = "Modificaciones activas y camuflajeadas."})
+    end
+})
