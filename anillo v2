@@ -22,4 +22,4 @@ MT.__namecall = newcclosure(function(self, ...)
 end)
 
 task.wait(3) -- Delay para asegurar que el Metatable esté enganchado
-loadstring(game:HttpGet("https://tu-link-privado.com/anillo3.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/zhubx2867-beep/Proyectos-X/refs/heads/main/anillo%20v3"))()
