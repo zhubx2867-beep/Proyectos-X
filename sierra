@@ -1065,7 +1065,7 @@ local SectionRtx = TabBypass:CreateSection(" <-- -------------------------------
 
 
 
-local SectionFlyZ = TabBypass:CreateSection("Fly (Los Mochis, Mexico) ✈️")
+local SectionFlyZ = TabBypass:CreateSection("Fly (Sierra, Mexico) ✈️")
 -- [[ TOGGLE PARA ACTIVAR EL FLY ]]]
 
 TabBypass:CreateToggle({
@@ -1106,7 +1106,7 @@ TabBypass:CreateSlider({
 
 
 
-local SectionSpeedZ = TabBypass:CreateSection("Speed (Los Mochis, Mexico) ⚡")
+local SectionSpeedZ = TabBypass:CreateSection("Speed (Sierra, Mexico) ⚡")
 
 -- [[ TOGGLE PARA ACTIVAR EL SPEED ]]
 TabBypass:CreateToggle({
