@@ -3693,7 +3693,7 @@ end)
 
 
 
--- 🔥 CEREBRO 1: EXTRACCIÓN Y AUTO-EQUIP (OPTIMIZADO) 🔥
+-- 🔥 CEREBRO 1: EXTRACCIÓN Y AUTO-EQUIP (OPTIMIZADO + FIX INVENTARIO) 🔥
 task.spawn(function()
     local RunService = game:GetService("RunService")
     local Players = game:GetService("Players")
@@ -3706,16 +3706,19 @@ task.spawn(function()
         local hum = char and char:FindFirstChild("Humanoid")
         if not hum then return end
         
-        -- AUTO-EQUIP
+        -- AUTO-EQUIP (CON FIX DE EPILEPSIA)
         if _G.AutoEquipSlot > 0 then
-            local backpack = LP:FindFirstChild("Backpack")
-            if backpack then
-                local tools = {}
-                for _, v in pairs(backpack:GetChildren()) do
-                    if v:IsA("Tool") then table.insert(tools, v) end
-                end
-                if tools[_G.AutoEquipSlot] and hum.Parent then
-                    hum:EquipTool(tools[_G.AutoEquipSlot])
+            local CurrentEquipped = char:FindFirstChildOfClass("Tool")
+            if not CurrentEquipped then
+                local backpack = LP:FindFirstChild("Backpack")
+                if backpack then
+                    local tools = {}
+                    for _, v in pairs(backpack:GetChildren()) do
+                        if v:IsA("Tool") then table.insert(tools, v) end
+                    end
+                    if tools[_G.AutoEquipSlot] and hum.Parent then
+                        hum:EquipTool(tools[_G.AutoEquipSlot])
+                    end
                 end
             end
         end
@@ -3739,8 +3742,8 @@ task.spawn(function()
                     if not ProcessedAutoEnemies[eChar] then
                         pcall(function()
                             local partToTP = (mode == "Cabeza (Head)" and eChar:FindFirstChild("Head")) or 
-                                            (mode == "Torso" and (eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso"))) or 
-                                            hrp
+                                             (mode == "Torso" and (eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso"))) or 
+                                             hrp
                             
                             if partToTP then
                                 if mode ~= "Cuerpo Entero (HRP)" then
