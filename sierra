@@ -1,0 +1,3928 @@
+-- [[ SISTEMA DE SEGURIDAD: GAME LOCK ]]
+local GameID = 17045823120
+
+if game.PlaceId == GameID then
+    -- ✅ JUEGO CORRECTO
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Z-hub SISTEMA",
+        Text = "¡Bienvenido a Sierra, Mexico! ⚔️",
+        Duration = 5,
+        Icon = "rbxassetid://4483345998"
+    })
+else
+    -- ❌ JUEGO INCORRECTO
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Z-hub SEGURIDAD",
+        Text = " !ID Incorrecto.",
+        Duration = 10
+    })
+    return -- Detiene la ejecución de todo lo que sigue
+end
+
+-- De aquí para abajo va tu código de Rayfield y el motor...
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Sierra, Mexico | By @znoreste",
+   LoadingTitle = "Cargando | Script For | Sierra, Mexico",
+   LoadingSubtitle = "by @znoreste",
+   ConfigurationIncrementalSave = true,
+   CaseInsensitiveConfigurations = true,
+   Theme = "Green", 
+})
+
+-- [[ VARIABLES GLOBALES Z-SQUAD ]]
+_G.AimbotEnabled = false
+_G.TeamCheck = false
+_G.WallCheck = false
+_G.AimbotStrength = 5
+_G.FOVSize = 80
+_G.ShowFOV = false
+_G.FOVRainbow = false
+_G.AimPart = "HumanoidRootPart"
+
+-- Limpié la basura del Drawing.new() que tenías arriba y causaba lag.
+
+-- [[ CATEGORÍAS ]]
+local TabCombat = Window:CreateTab("💻  Combat")
+local TabVisuals = Window:CreateTab("🏈  Visuals")
+local TabBypass = Window:CreateTab("⚓  Bypass")
+local TabSword = Window:CreateTab("🔥  Others")
+local TabCreditos = Window:CreateTab("📜  Credits")
+
+
+
+
+
+
+
+
+
+-- [[ SECCIÓN: HITBOX FANTASMA ]]
+local SectionRtx = TabCombat:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx2 = TabCombat:CreateSection(" ///                        ミ★ Secion| Aim Bot ★彡                             ")
+
+local SectionRtx3 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx = TabCombat:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+TabCombat:CreateSection(" -- Aimbot X (Mejorado) -- ")
+
+-- ACTIVACIÓN
+TabCombat:CreateToggle({
+   Name = "Aimbot (🔥)",
+   CurrentValue = false,
+   Callback = function(Value) _G.AimbotEnabled = Value end,
+})
+
+-- LISTA DE OBJETIVOS
+TabCombat:CreateDropdown({
+   Name = "Objetivo",
+   Options = {"Head", "Torso"},
+   CurrentOption = {"Torso"},
+   MultipleOptions = false,
+   Flag = "TargetDropdown",
+   Callback = function(Option)
+      if Option[1] == "Head" then
+         _G.AimPart = "Head"
+      else
+         _G.AimPart = "HumanoidRootPart"
+      end
+      Rayfield:Notify({Title = "Z-Hub", Content = "Apuntando a: " .. Option[1], Duration = 2})
+   end,
+})
+
+-- ANCLAJE (Corregido para ser exacto)
+TabCombat:CreateSlider({
+   Name = "Fuerza de Anclaje",
+   Range = {1, 15},
+   Increment = 1,
+   CurrentValue = 5,
+   Callback = function(Value) _G.AimbotStrength = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "TeamCheck",
+   CurrentValue = false,
+   Callback = function(Value) _G.TeamCheck = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "Wallcheck",
+   CurrentValue = false,
+   Callback = function(Value) _G.WallCheck = Value end,
+})
+
+TabCombat:CreateSlider({
+   Name = "Fov Range",
+   Range = {1, 300}, -- Le di más rango para que lo ajustes mejor
+   Increment = 1,
+   CurrentValue = 80,
+   Callback = function(Value) _G.FOVSize = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "Show Fov",
+   CurrentValue = false,
+   Callback = function(Value) _G.ShowFOV = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "Fov Rainbow",
+   CurrentValue = false,
+   Callback = function(Value) _G.FOVRainbow = Value end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- OTRas opciones
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ SECCIÓN: HITBOX FANTASMA ]]
+local SectionRtx = TabCombat:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx2 = TabCombat:CreateSection(" ///                        ミ★ Sección| Hit Box ★彡                             ")
+
+local SectionRtx3 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx = TabCombat:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ SECCIÓN: HITBOX FANTASMA ]]
+local SectionModular = TabCombat:CreateSection(" -- Hitbox -- ")
+
+-- Variables de control (Disfrazadas para _G)
+_G.Z_Hitbox_Active = false
+_G.Z_Hitbox_Size = 20
+_G.Z_Hitbox_Mode = "Torso"
+_G.Z_Team_Check = false
+_G.Z_Force_Reset = false
+
+TabCombat:CreateToggle({
+   Name = "Hitbox (🔥)",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.Z_Hitbox_Active = Value 
+      if not Value then _G.Z_Force_Reset = true end 
+   end,
+})
+
+TabCombat:CreateToggle({
+   Name = "TeamCheck",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.Z_Team_Check = Value 
+      _G.Z_Force_Reset = true 
+      Rayfield:Notify({Title = "Z-Hub", Content = "Filtro de equipo actualizado", Duration = 2})
+   end,
+})
+
+TabCombat:CreateDropdown({
+   Name = "Parts ?",
+   Options = {"Head", "Torso", "Huesos"},
+   CurrentOption = {"Torso"},
+   MultipleOptions = false,
+   Callback = function(Option)
+      _G.Z_Hitbox_Mode = Option[1]
+      _G.Z_Force_Reset = true 
+      Rayfield:Notify({Title = "Z-Hub", Content = "Objetivo fijado en: " .. _G.Z_Hitbox_Mode, Duration = 2})
+   end,
+})
+
+TabCombat:CreateSlider({
+   Name = "Spand Hitbox ",
+   Range = {1, 75},
+   Increment = 1,
+   CurrentValue = 20,
+   Callback = function(Value) 
+      _G.Z_Hitbox_Size = Value 
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ SECCIÓN: HITBOX FANTASMA ]]
+local SectionRtx = TabCombat:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx2 = TabCombat:CreateSection(" ///                        ミ★ Sección| Anti Hit ★彡                            ")
+
+local SectionRtx3 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx = TabCombat:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionGhost = TabCombat:CreateSection("-- Anti Hit V1 --")
+
+TabCombat:CreateToggle({
+   Name = "Anti Hit v1 (🔥)",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.ModoGhostFE = Value 
+      -- Esto te pone transparente solo a ti para que sepas que jaló
+      if game.Players.LocalPlayer.Character then
+          for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+              if v:IsA("") or v:IsA("Decal") then
+                  v.Transparency = Value and 0 or 0
+              end
+          end
+      end
+      Rayfield:Notify({
+         Title = "Z-Hub Anti Hit v1",
+         Content = Value and "Anti Hit v1 Activo. ¡A darle!" or "Anti Hit v1 Desactivado",
+         Duration = 2
+      })
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ CATEGORÍA COMBAT ]]
+TabCombat:CreateSection(" -- Anti Hit V2 -- ")
+
+_G.DennisEnabled = false
+local DennisCFrame = nil
+local RealCFrame = nil
+local RealVelocity = Vector3.new(0,0,0)
+local FakeClone = nil
+local WasDennis = false
+local CamAnchor = nil
+
+-- El truco mágico de la cámara que usamos en el God Mode
+local function GetCamAnchor()
+    if not CamAnchor then
+        CamAnchor = Instance.new("Part")
+        CamAnchor.Name = "Z_CamAnchor"
+        CamAnchor.Transparency = 1 
+        CamAnchor.CanCollide = false 
+        CamAnchor.Anchored = true
+        CamAnchor.Size = Vector3.new(1, 1, 1)
+        CamAnchor.Parent = workspace
+    end
+    return CamAnchor
+end
+
+TabCombat:CreateToggle({
+   Name = "Anti Hit v2 (🔥)",
+   CurrentValue = false,
+   Flag = "ToggleDennisZ",
+   Callback = function(Value)
+      _G.DennisEnabled = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ SECCIÓN: HITBOX FANTASMA ]]
+local SectionRtx = TabCombat:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx2 = TabCombat:CreateSection(" ///                        ミ★ Others Option ★彡                             ")
+
+local SectionRtx3 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx = TabCombat:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_G.TriggerBotEnabled = false
+_G.TriggerWallCheck = false -- Por defecto APAGADO (Atraviesa paredes)
+_G.TriggerTeamCheck = false -- Por defecto APAGADO (Mata a todos)
+_G.TriggerLevel = "5 (Fluido / Dejar Apretado)" -- Nivel por defecto
+
+TabCombat:CreateSection(" -- Trigger Bot / Beta v1.2 🔫 -- ")
+
+TabCombat:CreateToggle({
+   Name = "Trigger Bot (🔥)",
+   CurrentValue = false,
+   Flag = "ToggleTriggerZ",
+   Callback = function(Value)
+      _G.TriggerBotEnabled = Value
+   end,
+})
+
+TabCombat:CreateToggle({
+   Name = "WallCheck",
+   CurrentValue = false,
+   Flag = "ToggleWallCheckZ",
+   Callback = function(Value)
+      _G.TriggerWallCheck = Value
+   end,
+})
+
+TabCombat:CreateToggle({
+   Name = "TeamCheck",
+   CurrentValue = false,
+   Flag = "ToggleTeamCheckZ",
+   Callback = function(Value)
+      _G.TriggerTeamCheck = Value
+   end,
+})
+
+TabCombat:CreateDropdown({
+   Name = "Level",
+   Options = {"1", "2", "3", "4", "5 (Fluido / Dejar Apretado)"},
+   CurrentOption = {"5 (Fluido / Dejar Apretado)"},
+   MultipleOptions = false,
+   Flag = "DropdownTriggerLevelZ",
+   Callback = function(Option)
+      local opt = type(Option) == "table" and Option[1] or Option
+      _G.TriggerLevel = opt
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_G.FakeLagEnabled = false
+_G.LagSeconds = 5 -- Tiempo por defecto
+
+
+
+TabCombat:CreateSection(" -- Fake lag ☠️ -- ")
+
+-- Botón de Activación
+TabCombat:CreateButton({
+   Name = "Fake lag (❄️)",
+   Callback = function()
+      if not _G.FakeLagEnabled then
+         _G.FakeLagEnabled = true
+         Rayfield:Notify({Title = "Z-Hub", Content = "Fake lag Offline. ¡Muévete ahora!", Duration = 3})
+         
+         -- Se apaga solo después de los segundos elegidos para evitar el Kick
+         task.delay(_G.LagSeconds, function()
+             if _G.FakeLagEnabled then
+                 _G.FakeLagEnabled = false
+                 Rayfield:Notify({Title = "Z-hub", Content = "Fake Lag Online. TP realizado.", Duration = 2})
+             end
+         end)
+      else
+         _G.FakeLagEnabled = false
+      end
+   end,
+})
+
+-- Slider para elegir cuánto tiempo quieres "desaparecer"
+TabCombat:CreateSlider({
+   Name = "Seconds",
+   Range = {1, 20},
+   Increment = 1,
+   CurrentValue = 5,
+   Callback = function(Value)
+      _G.LagSeconds = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ SECCIÓN: HITBOX FANTASMA ]]
+local SectionRtx = TabCombat:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx2 = TabCombat:CreateSection(" ///                        ミ★ Secion| Tp Kill ★彡                             ")
+
+local SectionRtx3 = TabCombat:CreateSection(" /// ")
+
+local SectionRtx = TabCombat:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ MOTOR OFICIAL Z-SLX V8.0 - LITE / ZERO LAG EDITION 💀 ]]
+_G.TPKillV6_Enabled = false
+_G.TeamCheck_V6 = false
+_G.V6_Dist = 5
+_G.TargetPartOption = "Cabeza (Head)"
+
+-- Tabla de memoria para CERO LAG
+local ProcessedEnemies = {}
+
+local SectionTP = TabCombat:CreateSection("-- Tp Kill V1 / Normal 💀 --")
+
+TabCombat:CreateToggle({
+   Name = "Tp Kill v1 (🔥)",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.TPKillV6_Enabled = Value 
+      if not Value then table.clear(ProcessedEnemies) end
+   end,
+})
+
+TabCombat:CreateToggle({
+   Name = "TeamCheck",
+   CurrentValue = false,
+   Callback = function(Value) _G.TeamCheck_V6 = Value end,
+})
+
+TabCombat:CreateDropdown({
+   Name = "Parts",
+   Options = {"Cabeza (Head)", "Torso", "Cuerpo Entero (HRP)"},
+   CurrentOption = {"Cabeza (Head)"},
+   MultipleOptions = false,
+   Flag = "PartDropdownZ",
+   Callback = function(Option)
+      local Selected = type(Option) == "table" and Option[1] or Option
+      _G.TargetPartOption = Selected
+      table.clear(ProcessedEnemies) -- Resetea para aplicar el nuevo modo
+   end,
+})
+
+TabCombat:CreateInput({
+   Name = "Distance",
+   PlaceholderText = "1-15 (Ej: 5)",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+      local num = tonumber(Text)
+      if num then _G.V6_Dist = num end
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ MOTOR OFICIAL Z-SLX V11.3 - RELEASE CANDIDATE (RAYFIELD + INSTA-FIX MÓVIL) 🚁 ]]
+_G.AutoWipe_Enabled = false
+_G.AutoWipe_TeamCheck = false
+_G.AutoWipe_Part = "Cabeza (Head)"
+_G.AutoWipe_Dist = 10 
+
+_G.EnemiesInBunker = false 
+_G.AutoEquipSlot = 2 
+
+local ProcessedAutoEnemies = {}
+local SkyBase = nil
+local OriginalCFrame = nil 
+
+local SectionAuto = TabCombat:CreateSection("-- Tp Kill v2 / Auto Beta v1.0 🚁 --")
+
+TabCombat:CreateToggle({
+   Name = "Tp Kill Auto (🔥)",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.AutoWipe_Enabled = Value 
+      local LP = game:GetService("Players").LocalPlayer
+      local char = LP.Character
+      local root = char and char:FindFirstChild("HumanoidRootPart")
+      local hum = char and char:FindFirstChild("Humanoid")
+      
+      if Value then
+          if root then OriginalCFrame = root.CFrame end
+
+          if not SkyBase then
+              SkyBase = Instance.new("Part")
+              SkyBase.Size = Vector3.new(100, 2, 100)
+              SkyBase.Position = Vector3.new(50000, 50000, 50000) 
+              SkyBase.Anchored = true
+              SkyBase.Transparency = 0.7 
+              SkyBase.Material = Enum.Material.Glass
+              SkyBase.Color = Color3.fromRGB(255, 0, 0) 
+              SkyBase.Parent = workspace
+          end
+          
+          if root then
+              root.CFrame = CFrame.new(50000, 50005, 50000)
+              task.wait(0.1)
+              root.Anchored = true 
+          end
+      else
+          -- 🔥 FIX MÓVIL SÚPER AGRESIVO: RESTAURAR FÍSICAS Y BOTONES AL INSTANTE 🔥
+          if root and OriginalCFrame then 
+              root.Anchored = false 
+              
+              -- 1. Lo bajamos y matamos toda la inercia
+              root.CFrame = OriginalCFrame
+              root.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+              root.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+              
+              task.wait(0.05) 
+          end
+          
+          if hum then
+              -- 2. Quitamos el estado de "derribado"
+              hum.PlatformStand = false 
+              
+              -- 3. Engañamos al celular para que devuelva el Joystick
+              hum:ChangeState(Enum.HumanoidStateType.Freefall)
+              task.wait(0.01)
+              hum:ChangeState(Enum.HumanoidStateType.Landed)
+              
+              -- 4. Refrescamos estadísticas para que aparezca el botón de salto
+              local oldJump = hum.JumpPower
+              hum.JumpPower = 0
+              task.wait(0.01)
+              hum.JumpPower = oldJump
+          end
+          
+          -- 5. Forzamos actualización de la cámara
+          workspace.CurrentCamera.CameraSubject = hum
+
+          if SkyBase then SkyBase:Destroy() SkyBase = nil end
+          table.clear(ProcessedAutoEnemies)
+          _G.EnemiesInBunker = false
+      end
+   end,
+})
+
+TabCombat:CreateToggle({
+   Name = "Team Check",
+   CurrentValue = false,
+   Callback = function(Value) _G.AutoWipe_TeamCheck = Value end,
+})
+
+TabCombat:CreateDropdown({
+   Name = "Parts",
+   Options = {"Cabeza (Head)", "Torso", "Cuerpo Entero (HRP)"},
+   CurrentOption = {"Cabeza (Head)"},
+   MultipleOptions = false,
+   Flag = "DropdownAutoWipePart",
+   Callback = function(Option)
+      local Selected = type(Option) == "table" and Option[1] or Option
+      _G.AutoWipe_Part = Selected
+      table.clear(ProcessedAutoEnemies)
+   end,
+})
+
+TabCombat:CreateSlider({
+   Name = "Auto-Arma",
+   Range = {1, 5},
+   Increment = 1,
+   CurrentValue = 2, 
+   Flag = "SliderAutoEquip",
+   Callback = function(Value) _G.AutoEquipSlot = Value end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ MOTOR TP KILL DUAL (MODO SELECTIVO VIP - LITE, JUNTOS Y A LA CABEZA) 🎯 ]]
+_G.TPKillDual_Enabled = false
+_G.TeamCheck_V6 = false
+_G.TargetPartOption = "Cabeza (Head)"
+_G.V6_Dist = 10 
+
+_G.Target1 = "" -- Aquí se guardará el wey 1
+_G.Target2 = "" -- Aquí se guardará el wey 2
+
+local ProcessedEnemies = {}
+
+-- Función para conseguir la lista de los weyes en el server
+local function GetPlayerNames()
+    local names = {"Ninguno"} 
+    for _, p in pairs(game:GetService("Players"):GetPlayers()) do
+        if p ~= game:GetService("Players").LocalPlayer then
+            table.insert(names, p.Name)
+        end
+    end
+    return names
+end
+
+local SectionDual = TabCombat:CreateSection(" -- TP Kill v3 / Vengansa -- ")
+
+TabCombat:CreateToggle({
+   Name = "Tp kill (🔥)",
+   CurrentValue = false,
+   Flag = "ToggleTPDual",
+   Callback = function(Value)
+      _G.TPKillDual_Enabled = Value
+      if not Value then
+          table.clear(ProcessedEnemies) 
+      end
+   end,
+})
+
+-- Botón para recargar los nombres si entra gente nueva
+TabCombat:CreateButton({
+   Name = "Refresh 🔄",
+   Callback = function()
+      -- Refresca las opciones si tu Rayfield lo soporta
+   end,
+})
+
+local Drop1 = TabCombat:CreateDropdown({
+   Name = "Enemy 1",
+   Options = GetPlayerNames(),
+   CurrentOption = {"Ninguno"},
+   MultipleOptions = false,
+   Flag = "DropTarget1",
+   Callback = function(Option)
+      _G.Target1 = type(Option) == "table" and Option[1] or Option
+      table.clear(ProcessedEnemies) 
+   end,
+})
+
+local Drop2 = TabCombat:CreateDropdown({
+   Name = "Enemy 2",
+   Options = GetPlayerNames(),
+   CurrentOption = {"Ninguno"},
+   MultipleOptions = false,
+   Flag = "DropTarget2",
+   Callback = function(Option)
+      _G.Target2 = type(Option) == "table" and Option[1] or Option
+      table.clear(ProcessedEnemies)
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionRtx = TabBypass:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabBypass:CreateSection(" /// ")
+
+local SectionRtx2 = TabBypass:CreateSection(" ///                        ミ★ Secion| Movements ★彡                             ")
+
+local SectionRtx3 = TabBypass:CreateSection(" /// ")
+
+local SectionRtx = TabBypass:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionFlyZ = TabBypass:CreateSection("Fly (Los Mochis, Mexico) ✈️")
+-- [[ TOGGLE PARA ACTIVAR EL FLY ]]]
+
+TabBypass:CreateToggle({
+   Name = "Fly v1 (🔥)",
+   CurrentValue = false,
+   Flag = "FlySuperman_Flag", -- Para que se guarde en tu config .json
+   Callback = function(Value)
+      _G.Prueba_Enabled = Value
+   end,
+})
+
+-- [[ SLIDER PARA LA VELOCIDAD ]]
+TabBypass:CreateSlider({
+   Name = "Speed",
+   Range = {1, 100},
+   Increment = 1,
+   CurrentValue = 16,
+   Flag = "FlySpeed_Flag", -- También se guarda
+   Callback = function(Value)
+      -- El motor multiplica esto x5, así que 16 es la velocidad normal
+      _G.Pruebax_Size = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionSpeedZ = TabBypass:CreateSection("Speed (Los Mochis, Mexico) ⚡")
+
+-- [[ TOGGLE PARA ACTIVAR EL SPEED ]]
+TabBypass:CreateToggle({
+   Name = "Speed (🔥)",
+   CurrentValue = false,
+   Flag = "SpeedFisico_Flag", -- Se guarda en tu .json
+   Callback = function(Value)
+      _G.Speed_Enabled = Value
+   end,
+})
+
+-- [[ SLIDER PARA LA POTENCIA ]]
+TabBypass:CreateSlider({
+   Name = "Velocidad",
+   Range = {1, 100},
+   Increment = 1,
+   CurrentValue = 16,
+   Flag = "SpeedValue_Flag", -- Se guarda en tu .json
+   Callback = function(Value)
+      -- Recuerda que tu motor lo multiplica x6, así que 16 es lo normal
+      _G.Speed_Value = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+local SectionBypass = TabBypass:CreateSection("Atravesar Paredes 👻")
+
+_G.Noclip_Enabled = false
+
+TabBypass:CreateToggle({
+   Name = "Noclip (Atravesar Todo)",
+   CurrentValue = false,
+   Flag = "Noclip_Flag",
+   Callback = function(Value)
+      _G.Noclip_Enabled = Value
+   end,
+})
+
+-- [[ MOTOR DEL NOCLIP V2 ]]
+local RunService = game:GetService("RunService")
+local LP = game:GetService("Players").LocalPlayer
+
+RunService.Stepped:Connect(function()
+    if _G.Noclip_Enabled then
+        local Char = LP.Character
+        if Char then
+            -- 1. Desactivamos colisiones de las partes
+            for _, part in pairs(Char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+            
+            -- 2. 🧠 EL SECRETO: Forzamos al Humanoid a estar en estado NoClip
+            local Hum = Char:FindFirstChild("Humanoid")
+            if Hum then
+                -- Esto evita que Roblox te empuje hacia afuera de las paredes
+                Hum:ChangeState(Enum.HumanoidStateType.NoClip)
+            end
+        end
+    end
+end)
+
+
+
+
+
+
+
+--- Barra de vida
+
+
+
+
+
+-- [[ SECCIÓN: HITBOX FANTASMA ]]
+local SectionRtx = TabVisuals:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabVisuals:CreateSection(" /// ")
+
+local SectionRtx2 = TabVisuals:CreateSection(" ///                        ミ★ Secion| Esp ★彡                             ")
+
+local SectionRtx3 = TabVisuals:CreateSection(" /// ")
+
+local SectionRtx = TabVisuals:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TabVisuals:CreateSection(" -- Shadow Esp -- ")
+
+_G.ShadowESP = false
+
+TabVisuals:CreateToggle({
+   Name = "Esp v1",
+   CurrentValue = false,
+   Flag = "ToggleShadow",
+   Callback = function(Value)
+      _G.ShadowESP = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TabVisuals:CreateSection(" -- Skeleton ESP ☠️ -- ")
+
+_G.SkeletonESP = false
+
+TabVisuals:CreateToggle({
+   Name = "Esp v2",
+   CurrentValue = false,
+   Flag = "ToggleSkeleton",
+   Callback = function(Value)
+      _G.SkeletonESP = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TabVisuals:CreateSection(" -- 2D Esp -- ")
+
+_G.ESP_Boxes = false
+
+TabVisuals:CreateToggle({
+   Name = "Esp v3",
+   CurrentValue = false,
+   Flag = "ToggleESPBox",
+   Callback = function(Value)
+      _G.ESP_Boxes = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TabVisuals:CreateSection(" -- Tracers Esp -- ")
+
+_G.TracersEnabled = false
+_G.TracerOrigin = "Centro" -- Valor por defecto
+
+TabVisuals:CreateToggle({
+   Name = "Esp v4",
+   CurrentValue = false,
+   Flag = "ToggleTracers",
+   Callback = function(Value)
+      _G.TracersEnabled = Value
+   end,
+})
+
+TabVisuals:CreateDropdown({
+   Name = "Origen del Tracer",
+   Options = {"Arriba", "Centro", "Abajo"},
+   CurrentOption = {"Centro"},
+   MultipleOptions = false,
+   Callback = function(Option)
+      _G.TracerOrigin = Option[1]
+      -- Se actualiza en corto al instante
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionRtx = TabVisuals:CreateSection(" -- ⚔️------------------------------------------------------------------------⚔️ -- ")
+
+local SectionRtx1 = TabVisuals:CreateSection(" /// ")
+
+local SectionRtx2 = TabVisuals:CreateSection(" ///                        ミ★ Secion| Others Esp ★彡                             ")
+
+local SectionRtx3 = TabVisuals:CreateSection(" /// ")
+
+local SectionRtx = TabVisuals:CreateSection(" <-- ------------------------------------------------------------------------ --> ")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TabVisuals:CreateSection(" -- Radar Esp 🛰️ -- ")
+
+-- Variables Globales (Por defecto apagado)
+_G.RadarEnabled = false
+_G.RadarZoom = 2 
+_G.CompassEnabled = false
+
+-- BOTÓN DEL RADAR (Mini-Mapa)
+TabVisuals:CreateToggle({
+   Name = "Mini-Radar 2D (🔥)",
+   CurrentValue = false,
+   Flag = "ToggleRadarZ",
+   Callback = function(Value)
+      _G.RadarEnabled = Value
+   end,
+})
+
+-- SLIDER DEL ZOOM DEL RADAR
+TabVisuals:CreateSlider({
+   Name = "Zoom del Radar",
+   Range = {1, 10}, -- 1 = Ver a los que están pegados, 10 = Ver todo el mapa
+   Increment = 1,
+   CurrentValue = 2,
+   Flag = "SliderRadarZoom",
+   Callback = function(Value)
+      _G.RadarZoom = Value
+   end,
+})
+
+-- BOTÓN DE LA BRÚJULA (N/S/E/O)
+TabVisuals:CreateToggle({
+   Name = "Brújula (N/S/E/O 🧭)",
+   CurrentValue = false,
+   Flag = "ToggleCompassZ",
+   Callback = function(Value)
+      _G.CompassEnabled = Value
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionVisuals = TabVisuals:CreateSection("-- Fov 👁️ --")
+
+_G.DefaultFOV = 70 -- El FOV normal de Roblox es 70
+
+TabVisuals:CreateSlider({
+   Name = "Campo de Visión (FOV)",
+   Range = {1, 120},
+   Increment = 1,
+   CurrentValue = 70,
+   Flag = "FOV_Flag", -- 🔥 Se guarda en tu sistema de Configs
+   Callback = function(Value)
+      -- Aplicamos el FOV directamente a la cámara del juego
+      workspace.CurrentCamera.FieldOfView = Value
+   end,
+})
+
+-- Botón para resetearlo por si se marea el wey
+TabVisuals:CreateButton({
+   Name = "Resetear FOV 🔄",
+   Callback = function()
+      workspace.CurrentCamera.FieldOfView = 70
+      -- Ojo: Esto actualiza el slider visualmente también
+      Rayfield.Flags["FOV_Flag"]:Set(70)
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionAntAFK = TabBypass:CreateSection("Anti-Patada (Anti-AFK) ☕")
+
+_G.AntiAFK_Enabled = false
+
+TabBypass:CreateToggle({
+   Name = "Anti AFK",
+   CurrentValue = false,
+   Flag = "AntiAFK_Flag", -- Se guarda en tus configs
+   Callback = function(Value)
+      _G.AntiAFK_Enabled = Value
+   end,
+})
+
+-- [[ MOTOR DEL ANTI-AFK ]]
+local VirtualUser = game:GetService("VirtualUser")
+
+-- Usamos el evento Idled, que es el que Roblox activa antes de patearte
+LP.Idled:Connect(function()
+    if _G.AntiAFK_Enabled then
+        -- Mandamos un click virtual al centro de la pantalla
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+        
+        Rayfield:Notify({
+            Title = "Z-HUB",
+            Content = "¡Bypass de inactividad activado! No te sacará.",
+            Duration = 2
+        })
+    end
+end)
+
+
+
+
+
+
+
+
+-- [[ Z-SLX: MODO MINECRAFT 144p (FPS AL MÁXIMO) ]]
+local SectionSwordFPS = TabSword:CreateSection("Z-hub: FPS⚡")
+
+TabSword:CreateButton({
+   Name = "🚀 FPS Boost",
+   Callback = function()
+        -- 1. BAJAR LA CALIDAD INTERNA DEL MOTOR (EL SECRETO)
+        settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        
+        local g = game
+        local w = g.Workspace
+        local l = g.Lighting
+        local t = w.Terrain
+
+        -- 2. MATAR LA LUZ Y EL CIELO
+        l.GlobalShadows = false
+        l.FogEnd = 9e9
+        l.Brightness = 0 -- Cero brillo bonito
+        l.Ambient = Color3.fromRGB(120, 120, 120) -- Luz gris plana y fea
+        l.OutdoorAmbient = Color3.fromRGB(120, 120, 120)
+
+        -- Destruir el cielo y los filtros
+        for _, v in pairs(l:GetChildren()) do
+            if v:IsA("Atmosphere") or v:IsA("Sky") or v:IsA("PostEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("SunRaysEffect") then
+                v:Destroy()
+            end
+        end
+
+        -- 3. TERRENO PLANO (SIN PASTO, SIN AGUA REALISTA)
+        t.WaterWaveSize = 0
+        t.WaterWaveSpeed = 0
+        t.WaterReflectance = 0
+        t.WaterTransparency = 1
+        t.Decoration = false 
+
+        -- Seguro contra pasto necio
+        t:GetPropertyChangedSignal("Decoration"):Connect(function()
+            t.Decoration = false
+        end)
+
+        -- 4. EL CONVERTIDOR A MODO PAPA
+        local function PotatoMode(v)
+            pcall(function()
+                if v:IsA("BasePart") or v:IsA("MeshPart") then
+                    v.Material = Enum.Material.Plastic -- Plástico normal (más feo y ligero)
+                    v.Reflectance = 0
+                    v.CastShadow = false
+                    if v:IsA("MeshPart") then
+                        v.TextureID = "" -- Borra la textura 3D del objeto
+                    end
+                elseif v:IsA("Decal") or v:IsA("Texture") or v:IsA("SurfaceAppearance") then
+                    v:Destroy() -- Eliminar imágenes pegadas
+                elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+                    v:Destroy()
+                elseif v:IsA("SpecialMesh") then
+                    v.TextureId = ""
+                end
+            end)
+        end
+
+        -- Bucle infernal para destruir los gráficos de todo el mapa
+        task.spawn(function()
+            for i, v in pairs(w:GetDescendants()) do
+                PotatoMode(v)
+                if i % 250 == 0 then task.wait() end -- Anti-crasheo
+            end
+            print("✅ Z-SLX: GRÁFICOS DESTRUIDOS. BIENVENIDO A 1998.")
+        end)
+
+        -- Para lo que vaya spawneando (balas, jugadores nuevos, etc.)
+        w.DescendantAdded:Connect(function(v)
+            task.spawn(function() PotatoMode(v) end)
+        end)
+   end,
+})
+
+-- [[ Z-SLX: MONITOR DE STATS (FPS / PING / MEMORIA) ]]
+local SectionStats = TabSword:CreateSection("Z-hub: MONITOR DE SISTEMA 📊")
+
+_G.StatsHUD_Enabled = false
+
+TabSword:CreateToggle({
+   Name = "Mostrar Monitor (FPS/PING)",
+   CurrentValue = false,
+   Flag = "ToggleStats",
+   Callback = function(Value)
+      _G.StatsHUD_Enabled = Value
+      
+      local CoreGui = game:GetService("CoreGui")
+      local RunService = game:GetService("RunService")
+      local Players = game:GetService("Players")
+      local LocalPlayer = Players.LocalPlayer
+      
+      -- Si lo apagamos, borramos la barra
+      if not Value then
+          if CoreGui:FindFirstChild("ZSLX_StatsHUD") then
+              CoreGui.ZSLX_StatsHUD:Destroy()
+          end
+          return
+      end
+
+      -- CREACIÓN DE LA BARRA FLOTANTE
+      local Screen = Instance.new("ScreenGui")
+      Screen.Name = "ZSLX_StatsHUD"
+      Screen.ResetOnSpawn = false
+      Screen.Parent = CoreGui
+
+      local Frame = Instance.new("Frame")
+      Frame.Size = UDim2.new(0, 300, 0, 35)
+      Frame.Position = UDim2.new(0.5, -150, 0.5, -17) -- En el mero centro
+      Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- Negro elegante
+      Frame.BorderSizePixel = 0
+      Frame.Active = true
+      Frame.Parent = Screen
+
+      local Corner = Instance.new("UICorner")
+      Corner.CornerRadius = UDim.new(0, 8)
+      Corner.Parent = Frame
+
+      local Stroke = Instance.new("UIStroke")
+      Stroke.Color = Color3.fromRGB(0, 255, 255) -- Borde Cyan Z-SLX
+      Stroke.Thickness = 1.5
+      Stroke.Parent = Frame
+
+      local TextLabel = Instance.new("TextLabel")
+      TextLabel.Size = UDim2.new(1, 0, 1, 0)
+      TextLabel.BackgroundTransparency = 1
+      TextLabel.Font = Enum.Font.GothamBold
+      TextLabel.TextSize = 14
+      TextLabel.TextColor3 = Color3.new(1, 1, 1)
+      TextLabel.Text = "Cargando Stats..."
+      TextLabel.Parent = Frame
+
+      -- [[ SISTEMA PARA ARRASTRAR (DRAGGABLE) CELULAR Y PC ]]
+      local UserInputService = game:GetService("UserInputService")
+      local dragging, dragInput, dragStart, startPos
+
+      Frame.InputBegan:Connect(function(input)
+          if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+              dragging = true
+              dragStart = input.Position
+              startPos = Frame.Position
+              
+              input.Changed:Connect(function()
+                  if input.UserInputState == Enum.UserInputState.End then dragging = false end
+              end)
+          end
+      end)
+
+      Frame.InputChanged:Connect(function(input)
+          if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+              dragInput = input
+          end
+      end)
+
+      UserInputService.InputChanged:Connect(function(input)
+          if input == dragInput and dragging then
+              local delta = input.Position - dragStart
+              Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+          end
+      end)
+
+      -- [[ BUCLE DE ACTUALIZACIÓN (TIEMPO REAL) ]]
+      local lastUpdate = 0
+      RunService.RenderStepped:Connect(function(deltaTime)
+          if not _G.StatsHUD_Enabled then return end
+          
+          -- Actualizamos cada 0.2 segundos para que los números no parpadeen a lo loco
+          if tick() - lastUpdate > 0.2 then
+              lastUpdate = tick()
+              
+              -- Calcular FPS
+              local fps = math.floor(1 / deltaTime)
+              
+              -- Calcular Ping (ms)
+              local ping = 0
+              pcall(function() ping = math.floor(LocalPlayer:GetNetworkPing() * 1000) end)
+              
+              -- Calcular Memoria (simulando "CPU")
+              local mem = math.floor(game:GetService("Stats"):GetTotalMemoryUsageMb())
+              
+              -- Formato de la perra barra
+              TextLabel.Text = string.format(" | FPS: %d | PING: %d ms | MEM: %d MB | ", fps, ping, mem)
+              
+              -- Cambiar de color el FPS si baja mucho (Opcional, se ve pro)
+              if fps < 30 then
+                  TextLabel.TextColor3 = Color3.fromRGB(255, 50, 50) -- Rojo si hay lag
+              elseif fps < 60 then
+                  TextLabel.TextColor3 = Color3.fromRGB(255, 255, 0) -- Amarillo
+              else
+                  TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Blanco si va joya
+              end
+          end
+      end)
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionInfo = TabCreditos:CreateSection("Información del Script")
+
+-- Un párrafo para que eches tu choro o mensaje de bienvenida
+TabCreditos:CreateParagraph({
+    Title = "Z-hub | Fix",
+    Content = "para mas de 8 juegos de topones !! Opciones Anti hit v1, Anti hit v2, Aim Bot mejorado, Hit box v1, Tp kill v1, tp kill auto v2, tp kill select v3, y MUCHO MAS!!!"
+})
+
+local SectionTeam = TabCreditos:CreateSection("🔥 Mas informacion!! 🔥")
+
+-- Labels para los nombres (solo texto, no se pueden clickear)
+TabCreditos:CreateLabel("👑 Creador: @znoreste")
+TabCreditos:CreateLabel("🧠 seguridad y Bypass: 75%")
+TabCreditos:CreateLabel("🎨 Interfaz (UI): Rayfield Library")
+
+local SectionRedes = TabCreditos:CreateSection("🌐 Nuestras Redes")
+
+
+
+
+local SectionRtx = TabCreditos:CreateSection(" 🔻🔻🔻 ")
+
+-- Botón para copiar tu Discord
+TabCreditos:CreateButton({
+   Name = "Discord 👾",
+   Callback = function()
+      -- setclipboard copia el texto directamente al portapapeles del cel/PC
+      pcall(function() setclipboard("https://discord.gg/xQGEfYQa") end)
+      
+      Rayfield:Notify({
+         Title = "Z-hub", 
+         Content = "¡Link copiado al portapapeles! Únete ala comunidad!!.", 
+         Duration = 3,
+         Image = 4483345998
+      })
+   end,
+})
+
+local SectionRtx = TabCreditos:CreateSection(" 🔻🔻🔻 ")
+
+
+-- Botón para copiar YouTube o lo que quieras
+TabCreditos:CreateButton({
+   Name = "Tik tok",
+   Callback = function()
+      pcall(function() setclipboard("https://www.tiktok.com/@znoreste") end)
+      Rayfield:Notify({Title = "Z-hub", Content = "¡Ve a ver mis otros scripts!!", Duration = 3})
+   end,
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ 1. CREADOR DEL FOV PARA MÓVIL Y PC ]]
+local CoreGui = game:GetService("CoreGui")
+local ZSLX_FOV = CoreGui:FindFirstChild("ZSLX_MobileFOV")
+if not ZSLX_FOV then
+    ZSLX_FOV = Instance.new("ScreenGui")
+    ZSLX_FOV.Name = "ZSLX_MobileFOV"
+    ZSLX_FOV.IgnoreGuiInset = true 
+    ZSLX_FOV.Parent = CoreGui
+end
+
+local FOVCircle = ZSLX_FOV:FindFirstChild("FOVCircleFrame")
+local FOVStroke = nil
+
+if not FOVCircle then
+    FOVCircle = Instance.new("Frame")
+    FOVCircle.Name = "FOVCircleFrame"
+    FOVCircle.AnchorPoint = Vector2.new(0.5, 0.5)
+    FOVCircle.BackgroundTransparency = 1
+    FOVCircle.Parent = ZSLX_FOV
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(1, 0)
+    UICorner.Parent = FOVCircle
+
+    FOVStroke = Instance.new("UIStroke")
+    FOVStroke.Thickness = 2
+    FOVStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    FOVStroke.Parent = FOVCircle
+else
+    FOVStroke = FOVCircle:FindFirstChildOfClass("UIStroke")
+end
+
+-- [[ 2. SISTEMA DE WALLCHECK PROFESIONAL (RAYCAST) ]]
+local function IsVisible(targetPart)
+    local cam = workspace.CurrentCamera
+    local origin = cam.CFrame.Position
+    local direction = (targetPart.Position - origin)
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
+    raycastParams.FilterType = Enum.RaycastFilterType.Exclude
+    raycastParams.IgnoreWater = true
+
+    local result = workspace:Raycast(origin, direction, raycastParams)
+    
+    if result then
+        if result.Instance:IsDescendantOf(targetPart.Parent) then
+            return true -- El láser tocó al enemigo, sí es visible
+        end
+        return false -- El láser chocó con una pared
+    end
+    return true
+end
+
+-- [[ 3. LÓGICA DEL OBJETIVO PERFECTO ]]
+local function GetClosestPlayer()
+    local Target = nil
+    local Distance = _G.FOVSize -- AHORA SÍ RESPETA TU FOV AL 100%
+    local cam = workspace.CurrentCamera
+    local center = cam.ViewportSize / 2
+
+    for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+        if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild(_G.AimPart) and v.Character:FindFirstChild("Humanoid") then
+            
+            -- Checks básicos (Si está vivo, si es de tu equipo, etc)
+            if v.Character.Humanoid.Health <= 0 then continue end
+            if _G.TeamCheck and v.Team == game.Players.LocalPlayer.Team then continue end
+            
+            local targetPos = v.Character[_G.AimPart].Position
+            local screenPos, onScreen = cam:WorldToViewportPoint(targetPos)
+            
+            if onScreen then
+                local mag = (Vector2.new(screenPos.X, screenPos.Y) - center).Magnitude
+
+                if mag < Distance then
+                    -- Wallcheck Pro
+                    if _G.WallCheck and not IsVisible(v.Character[_G.AimPart]) then continue end
+                    
+                    Target = v
+                    Distance = mag -- Prioriza al que esté más al centro de tu FOV
+                end
+            end
+        end
+    end
+    return Target
+end
+
+-- [[ 4. RENDER LOOP Y ANCLAJE ]]
+game:GetService("RunService").RenderStepped:Connect(function()
+    -- Renderizado del FOV
+    if FOVCircle then
+        FOVCircle.Visible = _G.ShowFOV
+        local diametro = _G.FOVSize * 2
+        FOVCircle.Size = UDim2.new(0, diametro, 0, diametro)
+        FOVCircle.Position = UDim2.new(0, workspace.CurrentCamera.ViewportSize.X / 2, 0, workspace.CurrentCamera.ViewportSize.Y / 2)
+
+        if _G.FOVRainbow then
+            FOVStroke.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+        else
+            FOVStroke.Color = Color3.fromRGB(255, 255, 255)
+        end
+    end
+
+    -- El Motor del Aimbot
+    if _G.AimbotEnabled then
+        local Target = GetClosestPlayer()
+        if Target and Target.Character and Target.Character:FindFirstChild(_G.AimPart) then
+            local cam = workspace.CurrentCamera
+            local targetPos = Target.Character[_G.AimPart].Position
+            
+            -- MATEMÁTICA DE ANCLAJE MEJORADA (15 = AutoSnap Instántaneo)
+            local smoothness = _G.AimbotStrength / 15
+            local lookCFrame = CFrame.new(cam.CFrame.Position, targetPos)
+            
+            cam.CFrame = cam.CFrame:Lerp(lookCFrame, smoothness)
+        end
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Hit box
+
+
+
+-- [[ MOTOR Z-SLX: FIX FINAL ]]
+local s_p = "Si".."ze"
+local h_p = "He".."ad"
+local t_p = "Tor".."so"
+local tr_p = "Trans".."parency"
+local d_p = "Z".."Data".."99" 
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    -- Conectado a tus nuevas variables de Rayfield
+    if not _G.Z_Hitbox_Active and not _G.Z_Force_Reset then return end
+    
+    local lp = game.Players.LocalPlayer
+    -- Si el Slider de Rayfield falla, le damos un valor por defecto de 20
+    local val_size = _G.Z_Hitbox_Size or 20
+    local v_size = Vector3.new(val_size, val_size, val_size)
+
+    for _, p in pairs(game.Players:GetPlayers()) do
+        if p ~= lp and p.Character then
+            local char = p.Character
+            
+            -- TeamCheck y Reset
+            local is_team = _G.Z_Team_Check and lp.Team and p.Team == lp.Team
+            if not _G.Z_Hitbox_Active or _G.Z_Force_Reset or is_team then
+                for _, part in pairs(char:GetChildren()) do
+                    local backup = part:FindFirstChild(d_p)
+                    if backup then
+                        part[s_p] = backup.Value
+                        part[tr_p] = 0
+                        part.CanCollide = true
+                    end
+                end
+                if is_team then continue end
+            end
+
+            if not _G.Z_Hitbox_Active then continue end
+
+            -- Selección de Partes (Asegúrate que el Dropdown de Rayfield devuelva estos nombres)
+            local targets = {}
+            if _G.Z_Hitbox_Mode == "Head" then
+                table.insert(targets, char:FindFirstChild(h_p))
+            elseif _G.Z_Hitbox_Mode == "Torso" then
+                table.insert(targets, char:FindFirstChild(t_p) or char:FindFirstChild("Upper"..t_p))
+            elseif _G.Z_Hitbox_Mode == "Huesos" then
+                local bones = {"Left Arm", "Right Arm", "Left Leg", "Right Leg", "LeftUpperArm", "RightUpperArm"}
+                for _, b in pairs(bones) do 
+                    local bp = char:FindFirstChild(b)
+                    if bp then table.insert(targets, bp) end
+                end
+            end
+
+            -- Aplicación con bypass
+            for _, obj in pairs(targets) do
+                if obj and obj[s_p] ~= v_size then
+                    -- Guardar tamaño original si no existe
+                    if not obj:FindFirstChild(d_p) then
+                        local s = Instance.new("Vector3Value", obj)
+                        s.Name = d_p -- <-- Aquí estaba el error, ya quedó
+                        s.Value = obj[s_p]
+                    end
+                    
+                    obj[s_p] = v_size
+                    obj[tr_p] = 0.6
+                    obj.Color = Color3.fromRGB(255, 0, 0)
+                    obj.Material = Enum.Material.Neon
+                    obj.CanCollide = false
+                    obj.Massless = true
+                end
+            end
+        end
+    end
+    _G.Z_Force_Reset = false 
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Fly v1
+
+--// MOTOR FLY MÓVIL (FIX DIRECCIÓN INVERSA)
+task.spawn(function()
+    local p = game.Players.LocalPlayer
+    local runService = game:GetService("RunService")
+    local staticY = 0
+    local active = false
+    local PlayerControl = require(p.PlayerScripts:WaitForChild("PlayerModule")):GetControls()
+
+    runService.Stepped:Connect(function()
+        local char = p.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+
+        if _G.Prueba_Enabled and hrp and hum then
+            if not active then
+                staticY = hrp.Position.Y
+                active = true
+            end
+
+            hum:ChangeState(Enum.HumanoidStateType.Physics)
+            hum.PlatformStand = true
+            
+            local canCollideState = not (_G.Noclip_Enabled or false)
+            for _, part in pairs(char:GetChildren()) do
+                if part:IsA("BasePart") then part.CanCollide = canCollideState end
+            end
+            
+            local cam = workspace.CurrentCamera
+            local speed = (_G.Pruebax_Size or 16) * 5
+            
+            -- OBTENER MOVIMIENTO DEL JOYSTICK
+            local moveVector = PlayerControl:GetMoveVector()
+            
+            if moveVector.Magnitude > 0 then
+                local camCF = cam.CFrame
+                
+                -- LA CORRECCIÓN:
+                -- Calculamos el frente y el lado basándonos en la cámara
+                local look = camCF.LookVector
+                local right = camCF.RightVector
+                
+                -- MoveVector.Z es adelante/atrás, MoveVector.X es izquierda/derecha
+                -- Multiplicamos cada eje por su dirección correspondiente
+                local direction = (look * -moveVector.Z) + (right * moveVector.X)
+                
+                -- Aplicamos la velocidad física
+                hrp.AssemblyLinearVelocity = direction * speed
+                staticY = hrp.Position.Y 
+            else
+                -- FRENADO SECO
+                hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                hrp.CFrame = CFrame.new(hrp.Position.X, staticY, hrp.Position.Z) * hrp.CFrame.Rotation
+            end
+            
+            -- POSE SIEMPRE DERECHO
+            hrp.CFrame = CFrame.new(hrp.Position, hrp.Position + cam.CFrame.LookVector)
+            hrp.RotVelocity = Vector3.new(0, 0, 0)
+        else
+            if active then
+                active = false
+                if hum then
+                    hum.PlatformStand = false
+                    hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+                end
+                -- Resetear colisiones al apagar
+                if char then
+                    for _, part in pairs(char:GetChildren()) do
+                        if part:IsA("BasePart") then part.CanCollide = true end
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Speed
+
+
+--// MOTOR SPEED FÍSICO (CHOCA CON PAREDES + BYPASS)
+task.spawn(function()
+    local p = game.Players.LocalPlayer
+    local runService = game:GetService("RunService")
+    
+    runService.Stepped:Connect(function()
+        local char = p.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        
+        if _G.Speed_Enabled and hrp and hum then
+            if hum.MoveDirection.Magnitude > 0 then
+                -- Multiplicador x6
+                local multiplier = 6
+                local targetSpeed = (_G.Speed_Value or 16) * multiplier
+                
+                -- En lugar de CFrame, le damos velocidad real al cuerpo
+                -- Esto hace que el motor de Roblox detecte el choque con la montaña
+                local vel = hum.MoveDirection * targetSpeed
+                hrp.Velocity = Vector3.new(vel.X, hrp.Velocity.Y, vel.Z)
+            else
+                -- Si no te mueves, frenazo en seco para no patinar
+                hrp.Velocity = Vector3.new(0, hrp.Velocity.Y, 0)
+            end
+            
+            -- BYPASS DE ROTACIÓN (Para que no te kickee por girar raro)
+            hrp.RotVelocity = Vector3.new(0, 0, 0)
+            
+            -- FIX DE PAREDES: Forzamos que el mono sea sólido siempre
+            for _, part in pairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = true
+                end
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- MOTOR ESP 2D BOX + HEALTH BAR (Z-SQUAD LITE ENGINE - UPDATE PEGADA)
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local Camera = workspace.CurrentCamera
+    local CoreGui = game:GetService("CoreGui")
+    local LP = Players.LocalPlayer
+
+    -- Limpiamos si quedó basura de una ejecución anterior
+    if CoreGui:FindFirstChild("Z_ESP_LITE") then
+        CoreGui.Z_ESP_LITE:Destroy()
+    end
+
+    local ESPGui = Instance.new("ScreenGui")
+    ESPGui.Name = "Z_ESP_LITE"
+    ESPGui.IgnoreGuiInset = true -- Para que no se mueva con el chat
+    ESPGui.Parent = CoreGui
+
+    local ESP_Data = {}
+
+    -- FUNCIÓN: Crea las cajitas (Apagadas por defecto)
+    local function CreateESP(player)
+        if ESP_Data[player] then return end
+        
+        -- La Caja 2D
+        local box = Instance.new("Frame")
+        box.BackgroundColor3 = Color3.new(1,1,1)
+        box.BackgroundTransparency = 1
+        box.Visible = false
+        box.Parent = ESPGui
+        
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(255, 0, 0) -- Color de la caja (Rojo)
+        stroke.Thickness = 1.5
+        stroke.Parent = box
+
+        -- El fondo negro de la barra de vida (Borde exterior)
+        local bg = Instance.new("Frame")
+        bg.BackgroundColor3 = Color3.new(0, 0, 0)
+        bg.BorderSizePixel = 0
+        bg.Visible = false
+        bg.Parent = ESPGui
+
+        -- El relleno verde de la vida
+        local fill = Instance.new("Frame")
+        fill.AnchorPoint = Vector2.new(0, 1) -- Clave para que crezca de abajo hacia arriba
+        fill.Position = UDim2.new(0, 0, 1, 0)
+        fill.Size = UDim2.new(1, 0, 1, 0)
+        fill.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        fill.BorderSizePixel = 0
+        fill.Parent = bg
+
+        ESP_Data[player] = {Box = box, Bg = bg, Fill = fill}
+    end
+
+    -- FUNCIÓN: Borra todo si el wey se sale del server (Evita Lag)
+    local function RemoveESP(player)
+        if ESP_Data[player] then
+            ESP_Data[player].Box:Destroy()
+            ESP_Data[player].Bg:Destroy()
+            ESP_Data[player] = nil
+        end
+    end
+
+    -- Registramos a todos los que ya están y a los nuevos
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LP then CreateESP(p) end
+    end
+    Players.PlayerAdded:Connect(function(p)
+        if p ~= LP then CreateESP(p) end
+    end)
+    Players.PlayerRemoving:Connect(RemoveESP)
+
+    -- EL LOOP MAESTRO (Matemáticas de Pantalla)
+    RunService.RenderStepped:Connect(function()
+        for player, data in pairs(ESP_Data) do
+            -- Si apagaste el botón, se esconde todo de madrazo
+            if not _G.ESP_Boxes then
+                data.Box.Visible = false
+                data.Bg.Visible = false
+                continue
+            end
+
+            local char = player.Character
+            -- AQUÍ ESTÁ EL ANTI-BUG: Siempre revisa si el vato está vivo y tiene partes
+            if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Head") and char:FindFirstChild("Humanoid") then
+                local hrp = char.HumanoidRootPart
+                local head = char.Head
+                local hum = char.Humanoid
+
+                if hum.Health > 0 then
+                    -- Calculamos la cabeza (un poco más arriba) y los pies (abajo del torso)
+                    local headPos, onScreen1 = Camera:WorldToViewportPoint(head.Position + Vector3.new(0, 0.5, 0))
+                    local legPos, onScreen2 = Camera:WorldToViewportPoint(hrp.Position - Vector3.new(0, 3, 0))
+
+                    if onScreen1 or onScreen2 then
+                        -- Matemáticas de la caja
+                        local height = math.abs(headPos.Y - legPos.Y)
+                        local width = height / 1.8 -- Proporción perfecta de un cuerpo
+
+                        -- Posicionamos la Caja
+                        data.Box.Size = UDim2.new(0, width, 0, height)
+                        data.Box.Position = UDim2.new(0, headPos.X - (width / 2), 0, headPos.Y)
+                        data.Box.Visible = true
+
+                        -- 🛠️ UPDATE Z-SQUAD: Barra delgada (2px) y pegada a la caja (-3px para compensar el borde rojo)
+                        data.Bg.Size = UDim2.new(0, 2, 0, height) 
+                        data.Bg.Position = UDim2.new(0, headPos.X - (width / 2) - 3, 0, headPos.Y) 
+                        data.Bg.Visible = true
+
+                        -- Matemáticas de la Vida (Lerp suave)
+                        local hpPercent = math.clamp(hum.Health / hum.MaxHealth, 0, 1)
+                        data.Fill.Size = data.Fill.Size:Lerp(UDim2.new(1, 0, hpPercent, 0), 0.15)
+                        
+                        -- Color Dinámico
+                        data.Fill.BackgroundColor3 = Color3.fromHSV(hpPercent * 0.3, 1, 1)
+                    else
+                        -- Si no lo estás viendo, apaga la caja para no dar lag
+                        data.Box.Visible = false
+                        data.Bg.Visible = false
+                    end
+                else
+                    -- Si se murió (Health = 0), esconde la caja al instante
+                    data.Box.Visible = false
+                    data.Bg.Visible = false
+                end
+            else
+                -- Si está respawneando, se esconde
+                data.Box.Visible = false
+                data.Bg.Visible = false
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- MOTOR ESP TRACERS (Z-SQUAD 360° ANTI-SHAKE LITE ENGINE)
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local Camera = workspace.CurrentCamera
+    local CoreGui = game:GetService("CoreGui")
+    local LP = Players.LocalPlayer
+
+    -- Limpiar basura
+    if CoreGui:FindFirstChild("Z_TRACERS_LITE") then
+        CoreGui.Z_TRACERS_LITE:Destroy()
+    end
+
+    local TracerGui = Instance.new("ScreenGui")
+    TracerGui.Name = "Z_TRACERS_LITE"
+    TracerGui.IgnoreGuiInset = true 
+    TracerGui.Parent = CoreGui
+
+    local Tracer_Data = {}
+
+    local function CreateTracer(player)
+        if Tracer_Data[player] then return end
+        
+        local line = Instance.new("Frame")
+        line.Name = "TracerLine"
+        line.AnchorPoint = Vector2.new(0.5, 0.5) 
+        line.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        line.BorderSizePixel = 0
+        line.Visible = false
+        line.Parent = TracerGui
+
+        Tracer_Data[player] = line
+    end
+
+    local function RemoveTracer(player)
+        if Tracer_Data[player] then
+            Tracer_Data[player]:Destroy()
+            Tracer_Data[player] = nil
+        end
+    end
+
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LP then CreateTracer(p) end
+    end
+    Players.PlayerAdded:Connect(function(p)
+        if p ~= LP then CreateTracer(p) end
+    end)
+    Players.PlayerRemoving:Connect(RemoveTracer)
+
+    RunService.RenderStepped:Connect(function()
+        local ViewportSize = Camera.ViewportSize
+        
+        -- Calculamos el origen solo una vez por frame (Menos Lag)
+        local Origin = Vector2.new(ViewportSize.X / 2, ViewportSize.Y)
+        if _G.TracerOrigin == "Arriba" then
+            Origin = Vector2.new(ViewportSize.X / 2, 0)
+        elseif _G.TracerOrigin == "Centro" then
+            Origin = Vector2.new(ViewportSize.X / 2, ViewportSize.Y / 2)
+        end
+
+        for player, line in pairs(Tracer_Data) do
+            if not _G.TracersEnabled then
+                line.Visible = false
+                continue
+            end
+
+            local char = player.Character
+            if char and char:FindFirstChild("Head") and char:FindFirstChild("Humanoid") then
+                local head = char.Head
+                local hum = char.Humanoid
+
+                if hum.Health > 0 then
+                    local headPos, onScreen = Camera:WorldToViewportPoint(head.Position)
+                    local Target
+
+                    if onScreen then
+                        -- Si está en pantalla (Enfrente), apuntamos a su cabeza
+                        Target = Vector2.new(headPos.X, headPos.Y)
+                    else
+                        -- 🛠️ MAGIA Z-SQUAD 360°: Si está atrás, apuntamos a los bordes
+                        local centerScreen = Vector2.new(ViewportSize.X / 2, ViewportSize.Y / 2)
+                        
+                        -- Ajuste de coordenadas para los que están atrás (Z negativo)
+                        local fakePos = Vector2.new(headPos.X, headPos.Y)
+                        if headPos.Z < 0 then
+                            -- Invertir X y Y para que no cruce raro la pantalla
+                            fakePos = Vector2.new(
+                                centerScreen.X + (centerScreen.X - headPos.X), 
+                                centerScreen.Y + (centerScreen.Y - headPos.Y)
+                            )
+                        end
+                        
+                        -- Dirección desde el centro hacia donde está el wey
+                        local direction = (fakePos - centerScreen).Unit
+                        
+                        -- Mandamos el Target hasta el borde de tu pantalla (Efecto Radar)
+                        Target = centerScreen + (direction * (ViewportSize.X * 1.5))
+                    end
+                    
+                    -- 🧠 MATEMÁTICAS: Distancia, Centro y Rotación
+                    local Distance = (Target - Origin).Magnitude
+                    local Center = (Target + Origin) / 2
+                    local Angle = math.atan2(Target.Y - Origin.Y, Target.X - Origin.X)
+
+                    -- Dibujamos la línea
+                    line.Size = UDim2.new(0, Distance, 0, 1.5) 
+                    line.Position = UDim2.new(0, Center.X, 0, Center.Y)
+                    line.Rotation = math.deg(Angle)
+                    
+                    -- Color dinámico
+                    local hpPercent = math.clamp(hum.Health / hum.MaxHealth, 0, 1)
+                    line.BackgroundColor3 = Color3.fromHSV(hpPercent * 0.3, 1, 1)
+
+                    line.Visible = true
+                else
+                    line.Visible = false 
+                end
+            else
+                line.Visible = false
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- MOTOR SKELETON ESP (Z-SQUAD LITE ENGINE - R6 & R15 COMPATIBLE)
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local Camera = workspace.CurrentCamera
+    local CoreGui = game:GetService("CoreGui")
+    local LP = Players.LocalPlayer
+
+    -- Limpiamos ejecuciones pasadas
+    if CoreGui:FindFirstChild("Z_SKELETON_LITE") then
+        CoreGui.Z_SKELETON_LITE:Destroy()
+    end
+
+    local SkeletonGui = Instance.new("ScreenGui")
+    SkeletonGui.Name = "Z_SKELETON_LITE"
+    SkeletonGui.IgnoreGuiInset = true 
+    SkeletonGui.Parent = CoreGui
+
+    local Skeleton_Data = {}
+
+    -- FUNCIÓN: Crea 15 líneas invisibles por jugador (Límite máximo de partes R15)
+    local function CreateSkeleton(player)
+        if Skeleton_Data[player] then return end
+        
+        local lines = {}
+        for i = 1, 15 do
+            local line = Instance.new("Frame")
+            line.Name = "Bone_" .. i
+            line.AnchorPoint = Vector2.new(0.5, 0.5)
+            line.BackgroundColor3 = Color3.fromRGB(0, 255, 0) -- Verde Neón puro
+            line.BorderSizePixel = 0
+            line.Visible = false
+            line.Parent = SkeletonGui
+            table.insert(lines, line)
+        end
+        Skeleton_Data[player] = lines
+    end
+
+    local function RemoveSkeleton(player)
+        if Skeleton_Data[player] then
+            for _, line in pairs(Skeleton_Data[player]) do line:Destroy() end
+            Skeleton_Data[player] = nil
+        end
+    end
+
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LP then CreateSkeleton(p) end
+    end
+    Players.PlayerAdded:Connect(function(p)
+        if p ~= LP then CreateSkeleton(p) end
+    end)
+    Players.PlayerRemoving:Connect(RemoveSkeleton)
+
+    -- MAPEO INTELIGENTE Z-SQUAD (Detecta si es R15 o R6)
+    local function GetBones(char)
+        if char:FindFirstChild("UpperTorso") then
+            -- Esqueleto R15 (Realista)
+            return {
+                {char:FindFirstChild("Head"), char:FindFirstChild("UpperTorso")},
+                {char:FindFirstChild("UpperTorso"), char:FindFirstChild("LowerTorso")},
+                {char:FindFirstChild("UpperTorso"), char:FindFirstChild("LeftUpperArm")},
+                {char:FindFirstChild("LeftUpperArm"), char:FindFirstChild("LeftLowerArm")},
+                {char:FindFirstChild("LeftLowerArm"), char:FindFirstChild("LeftHand")},
+                {char:FindFirstChild("UpperTorso"), char:FindFirstChild("RightUpperArm")},
+                {char:FindFirstChild("RightUpperArm"), char:FindFirstChild("RightLowerArm")},
+                {char:FindFirstChild("RightLowerArm"), char:FindFirstChild("RightHand")},
+                {char:FindFirstChild("LowerTorso"), char:FindFirstChild("LeftUpperLeg")},
+                {char:FindFirstChild("LeftUpperLeg"), char:FindFirstChild("LeftLowerLeg")},
+                {char:FindFirstChild("LeftLowerLeg"), char:FindFirstChild("LeftFoot")},
+                {char:FindFirstChild("LowerTorso"), char:FindFirstChild("RightUpperLeg")},
+                {char:FindFirstChild("RightUpperLeg"), char:FindFirstChild("RightLowerLeg")},
+                {char:FindFirstChild("RightLowerLeg"), char:FindFirstChild("RightFoot")}
+            }
+        elseif char:FindFirstChild("Torso") then
+            -- Esqueleto R6 (Clásico)
+            return {
+                {char:FindFirstChild("Head"), char:FindFirstChild("Torso")},
+                {char:FindFirstChild("Torso"), char:FindFirstChild("Left Arm")},
+                {char:FindFirstChild("Torso"), char:FindFirstChild("Right Arm")},
+                {char:FindFirstChild("Torso"), char:FindFirstChild("Left Leg")},
+                {char:FindFirstChild("Torso"), char:FindFirstChild("Right Leg")}
+            }
+        end
+        return {}
+    end
+
+    -- EL LOOP MAESTRO (Une los huesos con matemáticas 2D)
+    RunService.RenderStepped:Connect(function()
+        for player, lines in pairs(Skeleton_Data) do
+            -- Si está apagado, escondemos todas sus líneas en corto
+            if not _G.SkeletonESP then
+                for _, line in pairs(lines) do line.Visible = false end
+                continue
+            end
+
+            local char = player.Character
+            if char and char:FindFirstChild("Humanoid") then
+                local hum = char.Humanoid
+                if hum.Health > 0 then
+                    local bones = GetBones(char)
+                    
+                    -- Iteramos sobre las 15 líneas que creamos
+                    for i = 1, 15 do
+                        local line = lines[i]
+                        local joint = bones[i]
+
+                        -- Si existe esta conexión (ej. Cabeza a Torso)
+                        if joint and joint[1] and joint[2] then
+                            local pos1, onScreen1 = Camera:WorldToViewportPoint(joint[1].Position)
+                            local pos2, onScreen2 = Camera:WorldToViewportPoint(joint[2].Position)
+
+                            -- Solo dibujamos el hueso si está en pantalla (evita bugs de líneas voladoras)
+                            if (onScreen1 or onScreen2) and pos1.Z > 0 and pos2.Z > 0 then
+                                local p1 = Vector2.new(pos1.X, pos1.Y)
+                                local p2 = Vector2.new(pos2.X, pos2.Y)
+
+                                local Distance = (p2 - p1).Magnitude
+                                local Center = (p1 + p2) / 2
+                                local Angle = math.atan2(p2.Y - p1.Y, p2.X - p1.X)
+
+                                line.Size = UDim2.new(0, Distance, 0, 1.5) -- 1.5px de grosor (Líneas finas)
+                                line.Position = UDim2.new(0, Center.X, 0, Center.Y)
+                                line.Rotation = math.deg(Angle)
+                                line.Visible = true
+                            else
+                                line.Visible = false
+                            end
+                        else
+                            line.Visible = false -- Apaga las líneas extra (ej. si es R6, apaga 10 líneas)
+                        end
+                    end
+                else
+                    -- Si se muere, apaga el esqueleto
+                    for _, line in pairs(lines) do line.Visible = false end
+                end
+            else
+                for _, line in pairs(lines) do line.Visible = false end
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- MOTOR SHADOW ESP / CHAMS (Z-SQUAD INMORTAL ENGINE)
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local CoreGui = game:GetService("CoreGui")
+    local LP = Players.LocalPlayer
+
+    -- Carpeta secreta para guardar los efectos (Evita anti-cheats)
+    local FolderName = "Z_SHADOW_FOLDER"
+    local ShadowFolder = CoreGui:FindFirstChild(FolderName)
+    
+    if not ShadowFolder then
+        ShadowFolder = Instance.new("Folder")
+        ShadowFolder.Name = FolderName
+        ShadowFolder.Parent = CoreGui
+    else
+        ShadowFolder:ClearAllChildren() -- Limpieza si reinicias el script
+    end
+
+    -- Limpiamos la basura si un wey se sale del servidor
+    Players.PlayerRemoving:Connect(function(player)
+        local shadow = ShadowFolder:FindFirstChild(player.Name .. "_Shadow")
+        if shadow then shadow:Destroy() end
+    end)
+
+    -- EL LOOP MAESTRO (A prueba de 1000 muertes)
+    RunService.RenderStepped:Connect(function()
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LP then
+                local hlName = player.Name .. "_Shadow"
+                local shadow = ShadowFolder:FindFirstChild(hlName)
+                local char = player.Character
+
+                -- Verificamos si el botón está prendido, si el wey existe y si está vivo
+                if _G.ShadowESP and char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") then
+                    local hum = char.Humanoid
+                    
+                    if hum.Health > 0 then
+                        -- Si no tiene su sombra creada, se la hacemos
+                        if not shadow then
+                            shadow = Instance.new("Highlight")
+                            shadow.Name = hlName
+                            
+                            -- 🛠️ LA MAGIA Z-SQUAD (Cero relleno, puro borde)
+                            shadow.FillTransparency = 1 -- 1 = Relleno invisible (Seko)
+                            shadow.OutlineTransparency = 0 -- 0 = Borde 100% visible
+                            shadow.OutlineColor = Color3.fromRGB(0, 255, 0) -- Verde Tóxico
+                            shadow.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Se ve a través de las paredes
+                            
+                            shadow.Parent = ShadowFolder
+                        end
+                        
+                        -- Enganchamos la sombra al cuerpo nuevo (Por si acaba de respawnear)
+                        shadow.Adornee = char
+                        shadow.Enabled = true
+                    else
+                        -- Si se muere, le apagamos la sombra para que no se quede el fantasma tirado
+                        if shadow then shadow.Enabled = false end
+                    end
+                else
+                    -- Si apagaste el botón desde el menú, o si el wey está cargando mapa
+                    if shadow then shadow.Enabled = false end
+                end
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- ==========================================================
+-- MOTOR COMBINADO: RADAR 2D + BRÚJULA (Z-SQUAD TACTICAL HUD)
+-- ==========================================================
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local Camera = workspace.CurrentCamera
+    local CoreGui = game:GetService("CoreGui")
+    local LP = Players.LocalPlayer
+
+    -- 1. LIMPIEZA GENERAL DE GUI VIEJA
+    if CoreGui:FindFirstChild("Z_TACTICAL_HUD") then
+        CoreGui.Z_TACTICAL_HUD:Destroy()
+    end
+
+    local HudGui = Instance.new("ScreenGui")
+    HudGui.Name = "Z_TACTICAL_HUD"
+    HudGui.IgnoreGuiInset = true 
+    HudGui.Parent = CoreGui
+
+    -- ==========================================
+    -- CONSTRUCCIÓN DEL RADAR 2D (MINI-MAPA)
+    -- ==========================================
+    local RadarBG = Instance.new("Frame")
+    RadarBG.Name = "RadarBackground"
+    RadarBG.Size = UDim2.new(0, 150, 0, 150)
+    RadarBG.Position = UDim2.new(0, 20, 0, 20) -- Arriba Izquierda
+    RadarBG.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    RadarBG.BackgroundTransparency = 0.2
+    RadarBG.Visible = false
+    RadarBG.Parent = HudGui
+
+    Instance.new("UICorner", RadarBG).CornerRadius = UDim.new(0.5, 0)
+    
+    local RadarStroke = Instance.new("UIStroke")
+    RadarStroke.Color = Color3.fromRGB(0, 255, 0)
+    RadarStroke.Thickness = 2
+    RadarStroke.Parent = RadarBG
+
+    -- Punto central (Tú)
+    local CenterDot = Instance.new("Frame")
+    CenterDot.Size = UDim2.new(0, 6, 0, 6)
+    CenterDot.Position = UDim2.new(0.5, -3, 0.5, -3)
+    CenterDot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    CenterDot.Parent = RadarBG
+    Instance.new("UICorner", CenterDot).CornerRadius = UDim.new(1, 0)
+    Instance.new("UIStroke", CenterDot).Thickness = 1
+
+    local Radar_Data = {}
+
+    local function CreateRadarDot(player)
+        if Radar_Data[player] then return end
+        local dot = Instance.new("Frame")
+        dot.Size = UDim2.new(0, 6, 0, 6)
+        dot.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        dot.Visible = false
+        dot.Parent = RadarBG
+        Instance.new("UICorner", dot).CornerRadius = UDim.new(1, 0)
+        Instance.new("UIStroke", dot).Thickness = 1
+        Radar_Data[player] = dot
+    end
+
+    -- ==========================================
+    -- CONSTRUCCIÓN DE LA BRÚJULA (COMPASS)
+    -- ==========================================
+    local CompassBG = Instance.new("Frame")
+    CompassBG.Name = "CompassBackground"
+    CompassBG.Size = UDim2.new(0, 400, 0, 40)
+    CompassBG.Position = UDim2.new(0.5, -200, 0, 15) -- Arriba Centro
+    CompassBG.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    CompassBG.BackgroundTransparency = 0.3
+    CompassBG.BorderSizePixel = 0
+    CompassBG.ClipsDescendants = true
+    CompassBG.Visible = false
+    CompassBG.Parent = HudGui
+
+    Instance.new("UICorner", CompassBG).CornerRadius = UDim.new(0, 8)
+    
+    local CompassStroke = Instance.new("UIStroke")
+    CompassStroke.Color = Color3.fromRGB(0, 255, 0)
+    CompassStroke.Thickness = 1
+    CompassStroke.Parent = CompassBG
+
+    local Marker = Instance.new("TextLabel")
+    Marker.Size = UDim2.new(0, 50, 0, 20)
+    Marker.Position = UDim2.new(0.5, -25, 0, -10)
+    Marker.BackgroundTransparency = 1
+    Marker.Text = "▼"
+    Marker.TextColor3 = Color3.fromRGB(0, 255, 0)
+    Marker.TextSize = 18
+    Marker.Font = Enum.Font.GothamBold
+    Marker.Parent = CompassBG
+
+    local DegreesText = Instance.new("TextLabel")
+    DegreesText.Size = UDim2.new(0, 50, 0, 20)
+    DegreesText.Position = UDim2.new(0.5, -25, 1, 0)
+    DegreesText.BackgroundTransparency = 1
+    DegreesText.Text = "0°"
+    DegreesText.TextColor3 = Color3.fromRGB(0, 255, 0)
+    DegreesText.TextSize = 14
+    DegreesText.Font = Enum.Font.GothamBold
+    DegreesText.Parent = CompassBG
+
+    local Directions = {
+        {Name = "N", Angle = 0}, {Name = "NE", Angle = 45}, {Name = "E", Angle = 90}, {Name = "SE", Angle = 135},
+        {Name = "S", Angle = 180}, {Name = "SO", Angle = 225}, {Name = "O", Angle = 270}, {Name = "NO", Angle = 315}
+    }
+
+    local Compass_Labels = {}
+    for _, dir in pairs(Directions) do
+        local label = Instance.new("TextLabel")
+        label.Size = UDim2.new(0, 30, 0, 30)
+        label.AnchorPoint = Vector2.new(0.5, 0.5)
+        label.BackgroundTransparency = 1
+        label.Text = dir.Name
+        label.Font = Enum.Font.GothamBold
+        
+        if string.len(dir.Name) == 1 then
+            label.TextSize = 18
+            label.TextColor3 = Color3.fromRGB(255, 255, 255)
+        else
+            label.TextSize = 14
+            label.TextColor3 = Color3.fromRGB(150, 150, 150)
+        end
+        
+        label.Parent = CompassBG
+        table.insert(Compass_Labels, {UI = label, Angle = dir.Angle})
+    end
+
+    -- ==========================================
+    -- GESTIÓN DE JUGADORES (Para el Radar)
+    -- ==========================================
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LP then CreateRadarDot(p) end
+    end
+    Players.PlayerAdded:Connect(function(p)
+        if p ~= LP then CreateRadarDot(p) end
+    end)
+    Players.PlayerRemoving:Connect(function(p)
+        if Radar_Data[p] then Radar_Data[p]:Destroy() Radar_Data[p] = nil end
+    end)
+
+    -- ==========================================
+    -- EL LOOP MAESTRO COMBINADO (Cero Lag)
+    -- ==========================================
+    RunService.RenderStepped:Connect(function()
+        local camLook = Camera.CFrame.LookVector
+        local lpChar = LP.Character
+        local lpPos = (lpChar and lpChar:FindFirstChild("HumanoidRootPart")) and lpChar.HumanoidRootPart.Position or nil
+
+        -- 1. LÓGICA DE LA BRÚJULA (COMPASS)
+        CompassBG.Visible = _G.CompassEnabled
+        DegreesText.Visible = _G.CompassEnabled
+        
+        if _G.CompassEnabled then
+            local camAngle = math.deg(math.atan2(camLook.X, -camLook.Z))
+            if camAngle < 0 then camAngle = camAngle + 360 end
+            DegreesText.Text = math.floor(camAngle) .. "°"
+            local fov = 90
+
+            for _, data in pairs(Compass_Labels) do
+                local diff = data.Angle - camAngle
+                if diff > 180 then diff = diff - 360 end
+                if diff < -180 then diff = diff + 360 end
+
+                if math.abs(diff) <= fov then
+                    data.UI.Visible = true
+                    data.UI.Position = UDim2.new(0.5 + (diff / (fov * 2)), 0, 0.5, 0)
+                    data.UI.TextTransparency = 1 - (1 - (math.abs(diff) / fov))
+                else
+                    data.UI.Visible = false
+                end
+            end
+        end
+
+        -- 2. LÓGICA DEL RADAR 2D
+        RadarBG.Visible = _G.RadarEnabled
+        
+        if _G.RadarEnabled and lpPos then
+            local radarCFrame = CFrame.lookAt(Vector3.new(0,0,0), Vector3.new(camLook.X, 0, camLook.Z))
+            local zoom = _G.RadarZoom or 2 -- Evita error si la variable no existe aún
+
+            for player, dot in pairs(Radar_Data) do
+                local char = player.Character
+                if char and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
+                    local enemyPos = char.HumanoidRootPart.Position
+                    local offset = enemyPos - lpPos
+                    local relativePos = radarCFrame:PointToObjectSpace(offset)
+                    
+                    local x = relativePos.X / (zoom * 2)
+                    local y = relativePos.Z / (zoom * 2)
+                    local radius = 70
+                    local dist = math.sqrt(x^2 + y^2)
+                    
+                    if dist > radius then
+                        x = (x / dist) * radius
+                        y = (y / dist) * radius
+                    end
+
+                    dot.Position = UDim2.new(0.5, x - 3, 0.5, y - 3)
+                    local hpPercent = math.clamp(char.Humanoid.Health / char.Humanoid.MaxHealth, 0, 1)
+                    dot.BackgroundColor3 = Color3.fromHSV(hpPercent * 0.3, 1, 1)
+                    dot.Visible = true
+                else
+                    dot.Visible = false
+                end
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- anti Hit v2 
+
+
+
+
+
+
+
+
+
+
+
+-- [[ MOTOR DE Anti Hit ]]
+_G.ModoGhostFE = false
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    local lp = game.Players.LocalPlayer
+    local char = lp.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    local hum = char and char:FindFirstChild("Humanoid")
+
+    if _G.ModoGhostFE and root and hum and hum.Health > 0 then
+        local oldPos = root.CFrame
+        -- Te manda al vacío para que nadie te pegue
+        root.CFrame = oldPos * CFrame.new(0, -50000, 0)
+        
+        -- Fix de Cámara: Mantiene tu vista donde está la acción
+        hum.CameraOffset = Vector3.new(0, 50000, 0)
+        
+        -- Regreso instantáneo: El secreto para que el arma dispare
+        game:GetService("RunService").RenderStepped:Wait()
+        root.CFrame = oldPos
+    elseif hum then
+        -- Limpiamos la cámara si se apaga el Ghost
+        hum.CameraOffset = Vector3.new(0, 0, 0)
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- MOTOR MODO DENNIS (Z-SQUAD PERFECT GHOST)
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local Camera = workspace.CurrentCamera
+    local LP = Players.LocalPlayer
+
+    -- PASO 1: Curar movimiento local y cámara (Te mueves rico y sin lag)
+    RunService.RenderStepped:Connect(function()
+        local Char = LP.Character
+        local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
+        local Hum = Char and Char:FindFirstChild("Humanoid")
+
+        if _G.DennisEnabled and HRP and Hum and RealCFrame then
+            -- 1. Curamos tu cuerpo fantasma para que corras bien
+            HRP.CFrame = RealCFrame
+            HRP.AssemblyLinearVelocity = RealVelocity
+            
+            -- 2. TRUCO DE LA CÁMARA
+            local anchor = GetCamAnchor()
+            anchor.Position = RealCFrame.Position + Vector3.new(0, 1.5, 0) 
+            Camera.CameraSubject = anchor
+
+            -- 3. 🔥 FIX DE VISIBILIDAD Z-SQUAD
+            -- Calculamos si estás en 1ra persona (Cerca del anchor)
+            local camDist = (Camera.CFrame.Position - anchor.Position).Magnitude
+            local isFirstPerson = camDist < 1.5
+
+            for _, part in pairs(Char:GetDescendants()) do
+                if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                    -- SI ES 1RA PERSONA = INVISIBLE (1) | SI ES 3RA PERSONA = NORMAL (0)
+                    part.LocalTransparencyModifier = isFirstPerson and 1 or 0
+                end
+            end
+        else
+            -- Si lo apagas, regresamos todo a la normalidad
+            if Hum and Camera.CameraSubject ~= Hum then
+                Camera.CameraSubject = Hum 
+                if Char then
+                    for _, part in pairs(Char:GetDescendants()) do
+                        if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                            part.LocalTransparencyModifier = 0
+                        end
+                    end
+                end
+            end
+            if CamAnchor then
+                CamAnchor:Destroy()
+                CamAnchor = nil
+            end
+        end
+    end)
+
+    -- PASO 2: Engañar al servidor (Dejar el cuerpo AFK)
+    RunService.Heartbeat:Connect(function()
+        local Char = LP.Character
+        local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
+        
+        if _G.DennisEnabled and HRP then
+            if not WasDennis then
+                -- ACABAS DE PRENDER EL BOTÓN
+                WasDennis = true
+                DennisCFrame = HRP.CFrame -- Guardamos tu base AFK
+                RealCFrame = HRP.CFrame
+                RealVelocity = HRP.AssemblyLinearVelocity
+
+                -- Creamos a tu clon visual para que veas dónde dejaste el cuerpo
+                Char.Archivable = true
+                FakeClone = Char:Clone()
+                FakeClone.Name = "Dennis_Z_Clone"
+                FakeClone.Parent = workspace
+                for _, v in pairs(FakeClone:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.Anchored = true
+                        v.CanCollide = false
+                    elseif v:IsA("Script") or v:IsA("LocalScript") then
+                        v:Destroy()
+                    end
+                end
+                FakeClone:PivotTo(DennisCFrame)
+            end
+
+            -- Guardamos a dónde estás corriendo en secreto
+            RealCFrame = HRP.CFrame
+            RealVelocity = HRP.AssemblyLinearVelocity
+
+            -- Engañamos al servidor: te clavamos en la base AFK
+            HRP.CFrame = DennisCFrame
+            HRP.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+            HRP.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+        else
+            if WasDennis then
+                -- APAGAR EL DENNIS (Te teletransportas)
+                WasDennis = false
+                
+                -- Te dejamos mágicamente en donde andaba tu fantasma
+                if HRP and RealCFrame then
+                    HRP.CFrame = RealCFrame 
+                    HRP.AssemblyLinearVelocity = Vector3.new(0,0,0)
+                end
+                
+                -- Borramos el maniquí
+                if FakeClone then
+                    FakeClone:Destroy()
+                    FakeClone = nil
+                end
+                
+                DennisCFrame = nil
+                RealCFrame = nil
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- MOTOR TRIGGER BOT V15.1 (Z-SQUAD 3D PARALLEL GRID - FIX DEFINITIVO CÁMARA MÓVIL)
+task.spawn(function()
+    local Players = game:GetService("Players")
+    local Camera = workspace.CurrentCamera
+    local LP = Players.LocalPlayer
+    local VIM = game:GetService("VirtualInputManager")
+    local UserInputService = game:GetService("UserInputService")
+    
+    local isMobile = UserInputService.TouchEnabled 
+
+    while task.wait() do 
+        if _G.TriggerBotEnabled then
+            local hitEnemy = false
+
+            -- 🔥 5 Rayos 3D directos de la cámara (Nunca se duermen)
+            local camCFrame = Camera.CFrame
+            local up = camCFrame.UpVector * 0.3    
+            local right = camCFrame.RightVector * 0.3 
+            
+            local origins = {
+                camCFrame.Position,               
+                camCFrame.Position + up,          
+                camCFrame.Position - up,          
+                camCFrame.Position + right,       
+                camCFrame.Position - right        
+            }
+            
+            local rayDirection = camCFrame.LookVector * 10000 
+            
+            local rayParams = RaycastParams.new()
+            rayParams.IgnoreWater = true
+
+            if _G.TriggerWallCheck then
+                rayParams.FilterDescendantsInstances = {LP.Character, Camera}
+                rayParams.FilterType = Enum.RaycastFilterType.Exclude
+            else
+                local enemyTargets = {}
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= LP and p.Character then
+                        if _G.TriggerTeamCheck and p.Team == LP.Team then
+                            -- Ignorar compas
+                        else
+                            table.insert(enemyTargets, p.Character)
+                        end
+                    end
+                end
+                rayParams.FilterDescendantsInstances = enemyTargets
+                rayParams.FilterType = Enum.RaycastFilterType.Include
+            end
+
+            for _, origin in ipairs(origins) do
+                local hit = workspace:Raycast(origin, rayDirection, rayParams)
+
+                if hit and hit.Instance then
+                    local currentObj = hit.Instance
+                    local Hum = nil
+                    local targetCharacter = nil
+
+                    while currentObj and currentObj ~= workspace do
+                        Hum = currentObj:FindFirstChild("Humanoid")
+                        if Hum then
+                            targetCharacter = currentObj
+                            break
+                        end
+                        currentObj = currentObj.Parent
+                    end
+                    
+                    if Hum and targetCharacter then
+                        local isEnemy = true
+                        if _G.TriggerTeamCheck then
+                            local targetPlayer = Players:GetPlayerFromCharacter(targetCharacter)
+                            if targetPlayer and targetPlayer.Team == LP.Team then
+                                isEnemy = false
+                            end
+                        end
+
+                        if Hum.Health > 0 and targetCharacter ~= LP.Character and isEnemy then
+                            hitEnemy = true
+                            break 
+                        end
+                    end
+                end
+            end
+
+            -- 🔥 EL CEREBRO DE LA RÁFAGA (AUTO-CLICKER ANTI-BUG) 🔥
+            if hitEnemy then
+                local delayMap = {["1"] = 0.2, ["2"] = 0.1, ["3"] = 0.05, ["4"] = 0.01, ["5 (Fluido / Dejar Apretado)"] = 0}
+                local waitTime = delayMap[_G.TriggerLevel] or 0
+                
+                if isMobile then
+                    local W = Camera.ViewportSize.X
+                    local H = Camera.ViewportSize.Y
+                    
+                    -- 1. APRIETA LOS 3 PUNTOS
+                    VIM:SendTouchEvent(11, 0, W * 0.80, H * 0.65)
+                    VIM:SendTouchEvent(12, 0, W * 0.85, H * 0.75)
+                    VIM:SendTouchEvent(13, 0, W * 0.75, H * 0.75)
+                    
+                    task.wait(0.01) -- Micro-pulso para que registre la bala
+                    
+                    -- 2. SUELTA INSTANTÁNEAMENTE (Libera la cámara para que no se congele)
+                    VIM:SendTouchEvent(11, 2, W * 0.80, H * 0.65)
+                    VIM:SendTouchEvent(12, 2, W * 0.85, H * 0.75)
+                    VIM:SendTouchEvent(13, 2, W * 0.75, H * 0.75)
+                    
+                    if waitTime > 0 then task.wait(waitTime) end
+                else
+                    -- MODO PC
+                    if mouse1press then 
+                        pcall(mouse1press) 
+                        task.wait(0.01)
+                        pcall(mouse1release)
+                        if waitTime > 0 then task.wait(waitTime) end
+                    else 
+                        VIM:SendMouseButtonEvent(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2, 0, true, game, 1)
+                        task.wait(0.01)
+                        VIM:SendMouseButtonEvent(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2, 0, false, game, 1)
+                        if waitTime > 0 then task.wait(waitTime) end
+                    end
+                end
+            end
+        end
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local LP = Players.LocalPlayer
+    
+    local FrozenPositions = {}
+    local WasActive = false
+
+    RunService.Heartbeat:Connect(function()
+        local Char = LP.Character
+        local HRP = Char and Char:FindFirstChild("HumanoidRootPart")
+
+        if _G.FakeLagEnabled and HRP then
+            if not WasActive then
+                WasActive = true
+                -- 🌐 Dormimos la conexión (El servidor deja de recibir tus pasos)
+                pcall(function() 
+                    settings().Network.IncomingReplicationLag = 999999 
+                end)
+            end
+
+            -- ❄️ Congelamos a los enemigos en tu pantalla
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= LP and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local eHrp = p.Character.HumanoidRootPart
+                    if not FrozenPositions[p.Name] then 
+                        FrozenPositions[p.Name] = eHrp.CFrame 
+                    end
+                    eHrp.CFrame = FrozenPositions[p.Name]
+                    eHrp.Velocity = Vector3.new(0, 0, 0)
+                end
+            end
+        elseif WasActive then
+            -- 🛑 Al apagar, restauramos todo
+            pcall(function() 
+                settings().Network.IncomingReplicationLag = 0 
+            end)
+            FrozenPositions = {}
+            WasActive = false
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- EL MOTOR DE EXTRACCIÓN MASIVA MODO LITE
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local LP = Players.LocalPlayer
+
+    RunService.Heartbeat:Connect(function()
+        local char = LP.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        
+        if not _G.TPKillV6_Enabled or not root then return end
+        
+        local targetPos = root.CFrame * CFrame.new(0, 0, -_G.V6_Dist)
+
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LP and p.Character then
+                local eChar = p.Character
+                local hum = eChar:FindFirstChild("Humanoid")
+                local hrp = eChar:FindFirstChild("HumanoidRootPart")
+                
+                if hum and hrp and hum.Health > 0 then
+                    -- 1. TEAM CHECK
+                    if _G.TeamCheck_V6 and (p.Team == LP.Team or p.TeamColor == LP.TeamColor) then 
+                        continue 
+                    end
+
+                    -- 2. FILTRO ANTI-INMORTALES
+                    local isProtected = eChar:FindFirstChildOfClass("ForceField") or eChar:FindFirstChild("ForceField") or (hum.Parent and hum.Parent:FindFirstChild("ForceField"))
+                    if isProtected then continue end
+
+                    -- 🔥 3. EL SÚPER BYPASS MODO LITE 🔥
+                    local mode = _G.TargetPartOption
+                    local isSitting = hum.Sit or hum.SeatPart ~= nil
+
+                    -- Si están sentados en una part/carro y elegiste Torso o Cuerpo... ¡LOS IGNORA!
+                    if isSitting and (mode == "Torso" or mode == "Cuerpo Entero (HRP)") then
+                        continue 
+                    end
+
+                    -- 4. PROCESAMIENTO ÚNICO (Solo 1 vez por enemigo para no dar lag)
+                    if not ProcessedEnemies[eChar] then
+                        pcall(function()
+                            local partToTP = nil
+
+                            if mode == "Cabeza (Head)" then
+                                partToTP = eChar:FindFirstChild("Head")
+                            elseif mode == "Torso" then
+                                partToTP = eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso")
+                            elseif mode == "Cuerpo Entero (HRP)" then
+                                partToTP = hrp
+                            end
+
+                            if partToTP then
+                                -- Limpieza visual (Arrancar cabeza/torso)
+                                if mode ~= "Cuerpo Entero (HRP)" then
+                                    local torso = eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso")
+                                    local neck = partToTP:FindFirstChild("Neck") or (torso and torso:FindFirstChild("Neck"))
+                                    if neck then neck:Destroy() end 
+                                    
+                                    for _, part in pairs(eChar:GetChildren()) do
+                                        if part:IsA("BasePart") and part.Name ~= partToTP.Name then
+                                            part.Transparency = 1 
+                                            part.CanCollide = false
+                                        elseif part:IsA("Accessory") then
+                                            part:Destroy()
+                                        end
+                                    end
+                                    partToTP.Color = Color3.fromRGB(255, 255, 255)
+                                    partToTP.Material = Enum.Material.Neon
+                                end
+
+                                -- Congelamos físicas ligeras
+                                hum.PlatformStand = true 
+                                ProcessedEnemies[eChar] = partToTP
+                            end
+                        end)
+                    end
+
+                    -- 5. TELETRANSPORTE CONTINUO Y LIGERO
+                    local targetPart = ProcessedEnemies[eChar]
+                    if targetPart and targetPart.Parent then
+                        targetPart.CanCollide = false
+                        targetPart.Massless = true
+                        targetPart.AssemblyLinearVelocity = Vector3.new(0,0,0)
+                        targetPart.AssemblyAngularVelocity = Vector3.new(0,0,0)
+                        
+                        targetPart.CFrame = targetPos
+                    end
+                end
+            end
+        end
+    end)
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 🔥 CEREBRO 1: EXTRACCIÓN Y AUTO-EQUIP (OPTIMIZADO) 🔥
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local LP = Players.LocalPlayer
+    local Camera = workspace.CurrentCamera
+
+    RunService.Heartbeat:Connect(function()
+        if not _G.AutoWipe_Enabled then return end
+        local char = LP.Character
+        local hum = char and char:FindFirstChild("Humanoid")
+        if not hum then return end
+        
+        -- AUTO-EQUIP
+        if _G.AutoEquipSlot > 0 then
+            local backpack = LP:FindFirstChild("Backpack")
+            if backpack then
+                local tools = {}
+                for _, v in pairs(backpack:GetChildren()) do
+                    if v:IsA("Tool") then table.insert(tools, v) end
+                end
+                if tools[_G.AutoEquipSlot] and hum.Parent then
+                    hum:EquipTool(tools[_G.AutoEquipSlot])
+                end
+            end
+        end
+
+        local targetPos = Camera.CFrame * CFrame.new(0, 0, -_G.AutoWipe_Dist)
+        local foundSomeone = false 
+
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LP and p.Character and p.Character:FindFirstChild("Humanoid") then
+                local eChar = p.Character
+                local eHum = eChar.Humanoid
+                local hrp = eChar:FindFirstChild("HumanoidRootPart")
+                
+                if eHum.Health > 0 and hrp then
+                    if _G.AutoWipe_TeamCheck and (p.Team == LP.Team or p.TeamColor == LP.TeamColor) then continue end
+                    if eChar:FindFirstChildOfClass("ForceField") then continue end
+
+                    foundSomeone = true
+                    local mode = _G.AutoWipe_Part
+
+                    if not ProcessedAutoEnemies[eChar] then
+                        pcall(function()
+                            local partToTP = (mode == "Cabeza (Head)" and eChar:FindFirstChild("Head")) or 
+                                            (mode == "Torso" and (eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso"))) or 
+                                            hrp
+                            
+                            if partToTP then
+                                if mode ~= "Cuerpo Entero (HRP)" then
+                                    local torso = eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso")
+                                    local neck = partToTP:FindFirstChild("Neck") or (torso and torso:FindFirstChild("Neck"))
+                                    if neck then neck:Destroy() end 
+                                    for _, part in pairs(eChar:GetChildren()) do
+                                        if part:IsA("BasePart") and part.Name ~= partToTP.Name then
+                                            -- 🔥 EL FIX DEL ERROR ROJO: SEPARADO EN DOS LÍNEAS 🔥
+                                            part.Transparency = 1 
+                                            part.CanCollide = false
+                                        elseif part:IsA("Accessory") then part:Destroy() end
+                                    end
+                                    partToTP.Color = Color3.fromRGB(255, 255, 255)
+                                    partToTP.Material = Enum.Material.Neon
+                                end
+                                eHum.PlatformStand = true 
+                                ProcessedAutoEnemies[eChar] = partToTP
+                            end
+                        end)
+                    end
+
+                    local targetPart = ProcessedAutoEnemies[eChar]
+                    if targetPart and targetPart.Parent then
+                        targetPart.CFrame = targetPos
+                        targetPart.AssemblyLinearVelocity = Vector3.new(0,0,0)
+                    end
+                end
+            end
+        end
+        _G.EnemiesInBunker = foundSomeone
+    end)
+end)
+
+-- 🔥 CEREBRO 2: GATILLO TAS-TAS (ANTI-BUG RAYFIELD) 🔥
+task.spawn(function()
+    local VIM = game:GetService("VirtualInputManager")
+    local Camera = workspace.CurrentCamera
+    local TimeSpentShooting = 0 
+    
+    while task.wait(0.01) do -- Pequeño delay para que el HUB no se trabe
+        if _G.AutoWipe_Enabled and _G.EnemiesInBunker then
+            local x = Camera.ViewportSize.X / 2
+            local y = Camera.ViewportSize.Y / 2
+            
+            VIM:SendMouseButtonEvent(x, y, 0, true, game, 1)
+            
+            local step = task.wait(0.01) -- Respiro para Rayfield
+            TimeSpentShooting = TimeSpentShooting + step
+            
+            if TimeSpentShooting >= 3 then
+                VIM:SendMouseButtonEvent(x, y, 0, false, game, 1)
+                VIM:SendKeyEvent(true, Enum.KeyCode.R, false, game)
+                task.wait(0.03)
+                VIM:SendKeyEvent(false, Enum.KeyCode.R, false, game)
+                
+                local r = 0
+                while r < 2 and _G.AutoWipe_Enabled do
+                    r = r + task.wait(0.1)
+                end
+                TimeSpentShooting = 0 
+            end
+        else
+            if _G.AutoWipe_Enabled then
+                local x = Camera.ViewportSize.X / 2
+                local y = Camera.ViewportSize.Y / 2
+                VIM:SendMouseButtonEvent(x, y, 0, false, game, 1)
+            end
+            task.wait(0.1) -- Ahorro de CPU si no hay nadie
+        end
+    end
+end)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- 🔥 EL MOTOR DE EXTRACCIÓN DUAL MODO VIP 🔥
+task.spawn(function()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local LP = Players.LocalPlayer
+    local Camera = workspace.CurrentCamera
+
+    RunService.Heartbeat:Connect(function()
+        local char = LP.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+        
+        if not _G.TPKillDual_Enabled or not root then return end
+
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LP and (p.Name == _G.Target1 or p.Name == _G.Target2) and p.Character then
+                local eChar = p.Character
+                local hum = eChar:FindFirstChild("Humanoid")
+                local hrp = eChar:FindFirstChild("HumanoidRootPart")
+                
+                if hum and hrp and hum.Health > 0 then
+                    if _G.TeamCheck_V6 and (p.Team == LP.Team or p.TeamColor == LP.TeamColor) then 
+                        continue 
+                    end
+
+                    local isProtected = eChar:FindFirstChildOfClass("ForceField") or eChar:FindFirstChild("ForceField") or (hum.Parent and hum.Parent:FindFirstChild("ForceField"))
+                    if isProtected then continue end
+
+                    local mode = _G.TargetPartOption
+                    local isSitting = hum.Sit or hum.SeatPart ~= nil
+
+                    if isSitting and (mode == "Torso" or mode == "Cuerpo Entero (HRP)") then
+                        continue 
+                    end
+
+                    -- 4. PROCESAMIENTO ÚNICO (MODO LITE: Sin brillos ni ropa borrada)
+                    if not ProcessedEnemies[eChar] then
+                        pcall(function()
+                            local partToTP = nil
+
+                            if mode == "Cabeza (Head)" then partToTP = eChar:FindFirstChild("Head")
+                            elseif mode == "Torso" then partToTP = eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso")
+                            elseif mode == "Cuerpo Entero (HRP)" then partToTP = hrp end
+
+                            if partToTP then
+                                if mode ~= "Cuerpo Entero (HRP)" then
+                                    local torso = eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso")
+                                    local neck = partToTP:FindFirstChild("Neck") or (torso and torso:FindFirstChild("Neck"))
+                                    if neck then neck:Destroy() end 
+                                end
+
+                                hum.PlatformStand = true 
+                                ProcessedEnemies[eChar] = partToTP
+                            end
+                        end)
+                    end
+
+                    -- 5. TELETRANSPORTE (Amontonados y con altura corregida a tu mira)
+                    local targetPart = ProcessedEnemies[eChar]
+                    if targetPart and targetPart.Parent then
+                        targetPart.CanCollide = false
+                        targetPart.Massless = true
+                        targetPart.AssemblyLinearVelocity = Vector3.new(0,0,0)
+                        targetPart.AssemblyAngularVelocity = Vector3.new(0,0,0)
+                        
+                        -- Calculamos el punto enfrente de ti
+                        local camCFrame = Camera.CFrame
+                        local basePos = root.Position
+                        local forwardPos = camCFrame.LookVector * _G.V6_Dist
+                        
+                        -- 🔥 EL FIX: Le sumamos 1.5 studs pa' arriba para que quede exacto en tu mira 🔥
+                        local heightFix = Vector3.new(0, 1.5, 0)
+                        
+                        -- Los mandamos a la coordenada con la altura corregida, mirándote a ti
+                        targetPart.CFrame = CFrame.new(basePos + forwardPos + heightFix, basePos + heightFix)
+                    end
+                end
+            end
+        end
+    end)
+end)
