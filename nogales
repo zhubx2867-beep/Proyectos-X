@@ -703,6 +703,58 @@ TabSword:CreateToggle({
    end,
 })
 
+local TabCreditos = Window:CreateTab("📜  Credits")
+
+local SectionInfo = TabCreditos:CreateSection("Información del Script")
+
+-- Un párrafo para que eches tu choro o mensaje de bienvenida
+TabCreditos:CreateParagraph({
+    Title = "Z-hub | Fix",
+    Content = "para mas de 8 juegos de topones !! Opciones Anti hit v1, Anti hit v2, Aim Bot mejorado, Hit box v1, Tp kill v1, tp kill auto v2, tp kill select v3, y MUCHO MAS!!!"
+})
+
+local SectionTeam = TabCreditos:CreateSection("🔥 Mas informacion!! 🔥")
+
+-- Labels para los nombres (solo texto, no se pueden clickear)
+TabCreditos:CreateLabel("👑 Creador: @znoreste")
+TabCreditos:CreateLabel("🧠 seguridad y Bypass: 75%")
+TabCreditos:CreateLabel("🎨 Interfaz (UI): Rayfield Library")
+
+local SectionRedes = TabCreditos:CreateSection("🌐 Nuestras Redes")
+
+
+
+
+local SectionRtx = TabCreditos:CreateSection(" 🔻🔻🔻 ")
+
+-- Botón para copiar tu Discord
+TabCreditos:CreateButton({
+   Name = "Discord 👾",
+   Callback = function()
+      -- setclipboard copia el texto directamente al portapapeles del cel/PC
+      pcall(function() setclipboard("https://discord.gg/xQGEfYQa") end)
+      
+      Rayfield:Notify({
+         Title = "Z-hub", 
+         Content = "¡Link copiado al portapapeles! Únete ala comunidad!!.", 
+         Duration = 3,
+         Image = 4483345998
+      })
+   end,
+})
+
+local SectionRtx = TabCreditos:CreateSection(" 🔻🔻🔻 ")
+
+
+-- Botón para copiar YouTube o lo que quieras
+TabCreditos:CreateButton({
+   Name = "Tik tok",
+   Callback = function()
+      pcall(function() setclipboard("https://www.tiktok.com/@znoreste") end)
+      Rayfield:Notify({Title = "Z-hub", Content = "¡Ve a ver mis otros scripts!!", Duration = 3})
+   end,
+})
+
 -- [[ LÓGICA MEJORADA CON SELECTOR ]]
 local function GetClosestPlayer()
     local Target = nil
