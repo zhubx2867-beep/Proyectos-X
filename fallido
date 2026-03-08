@@ -5,7 +5,7 @@ if game.PlaceId == GameID then
     -- ✅ JUEGO CORRECTO
     game:GetService("StarterGui"):SetCore("SendNotification", {
         Title = "Z-hub SISTEMA",
-        Text = "¡Bienvenido a Estado Fallido, Mexico! 👁️",
+        Text = "¡Bienvenido a Estado Fallido, Mexico! ⚓",
         Duration = 5,
         Icon = "rbxassetid://4483345998"
     })
