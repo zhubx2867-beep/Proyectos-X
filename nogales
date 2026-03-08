@@ -1,0 +1,1687 @@
+-- [[ SISTEMA DE SEGURIDAD: GAME LOCK ]]
+local GameID = 129158385471113
+
+if game.PlaceId == GameID then
+    -- ✅ JUEGO CORRECTO
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Z-hub SISTEMA",
+        Text = "¡Bienvenido a Heroica, Nogales! 💻",
+        Duration = 5,
+        Icon = "rbxassetid://4483345998"
+    })
+else
+    -- ❌ JUEGO INCORRECTO
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = "Z-hub SEGURIDAD",
+        Text = " !ID Incorrecto.",
+        Duration = 10
+    })
+    return -- Detiene la ejecución de todo lo que sigue
+end
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- [[ VARIABLES GLOBALES ]]
+_G.AimbotEnabled = false
+_G.TeamCheck = false
+_G.WallCheck = false
+_G.AimbotStrength = 5
+_G.FOVSize = 80
+_G.ShowFOV = false
+_G.FOVRainbow = false
+_G.AimPart = "HumanoidRootPart" -- Defecto: Torso
+
+-- [[ CONFIGURACIÓN FOV ]]
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Thickness = 2
+FOVCircle.Filled = false
+FOVCircle.Transparency = 1
+FOVCircle.NumSides = 60
+
+local Window = Rayfield:CreateWindow({
+   Name = "Heroica, Nogales | By @znoreste",
+   LoadingTitle = "Cargando | Script For | Heroica, Nogales",
+   LoadingSubtitle = "by @znoreste",
+   Theme = "Ocean"
+})
+
+local TabCombat = Window:CreateTab("COMBAT 💻", 4483362458)
+
+TabCombat:CreateSection("Aimbot Z")
+
+-- ACTIVACIÓN
+TabCombat:CreateToggle({
+   Name = "Activar Aimbot",
+   CurrentValue = false,
+   Callback = function(Value) _G.AimbotEnabled = Value end,
+})
+
+-- LISTA DE OBJETIVOS (HEAD / TORSO)
+TabCombat:CreateDropdown({
+   Name = "Objetivo del Aim",
+   Options = {"Head", "Torso"},
+   CurrentOption = {"Torso"},
+   MultipleOptions = false,
+   Flag = "TargetDropdown",
+   Callback = function(Option)
+      if Option[1] == "Head" then
+         _G.AimPart = "Head"
+      else
+         _G.AimPart = "HumanoidRootPart" -- Este es el Torso técnico
+      end
+      Rayfield:Notify({Title = "Z-SLX", Content = "Apuntando a: " .. Option[1], Duration = 2})
+   end,
+})
+
+-- ANCLAJE
+TabCombat:CreateSlider({
+   Name = "Fuerza de Anclaje (1-15)",
+   Range = {1, 15},
+   Increment = 1,
+   CurrentValue = 5,
+   Callback = function(Value) _G.AimbotStrength = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "Team Check",
+   CurrentValue = false,
+   Callback = function(Value) _G.TeamCheck = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "Wallcheck",
+   CurrentValue = false,
+   Callback = function(Value) _G.WallCheck = Value end,
+})
+
+TabCombat:CreateSlider({
+   Name = "Rango de FOV",
+   Range = {1, 120},
+   Increment = 1,
+   CurrentValue = 80,
+   Callback = function(Value) _G.FOVSize = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "Mostrar FOV",
+   CurrentValue = false,
+   Callback = function(Value) _G.ShowFOV = Value end,
+})
+
+TabCombat:CreateToggle({
+   Name = "FOV Rainbow 🌈",
+   CurrentValue = false,
+   Callback = function(Value) _G.FOVRainbow = Value end,
+})
+
+local SectionModular = TabCombat:CreateSection("hIT Box V1🛠️")
+
+_G.HitboxTarget = "Torso" 
+_G.HitboxSize_V1 = 20
+_G.HitboxEnabled_V1 = false
+_G.TeamCheck_V4 = true -- Valor inicial
+
+TabCombat:CreateDropdown({
+   Name = "Seleccionar Objetivo",
+   Options = {"Head", "Torso", "Huesos (All)"},
+   CurrentOption = {"Torso"},
+   MultipleOptions = false,
+   Callback = function(Option)
+      _G.HitboxTarget = Option[1]
+      _G.ForceReset = true -- Limpia para no encimar partes
+      Rayfield:Notify({Title = "Z-SLX", Content = "Objetivo: " .. _G.HitboxTarget, Duration = 2})
+   end,
+})
+
+TabCombat:CreateSlider({
+   Name = "Tamaño (1-55)",
+   Range = {1, 55},
+   Increment = 1,
+   CurrentValue = 20,
+   Callback = function(Value) 
+      _G.HitboxSize_V1 = Value 
+   end,
+})
+
+TabCombat:CreateToggle({
+   Name = "ACTIVAR HITBOX MODULAR",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.HitboxEnabled_V1 = Value 
+      if not Value then _G.ForceReset = true end 
+   end,
+})
+
+-- [[ BOTÓN DE TEAMCHECK V4 ]]
+TabCombat:CreateToggle({
+   Name = "TeamCheck V4 (Anti-Amigos)",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.TeamCheck_V4 = Value 
+      _G.ForceReset = true -- Limpiamos por si cambian de equipo
+      Rayfield:Notify({Title = "Z-SLX", Content = Value and "TeamCheck Activado" or "TeamCheck Desactivado", Duration = 2})
+   end,
+})
+
+local SectionTP = TabCombat:CreateSection("Tp Kill V1 | 💀")
+
+TabCombat:CreateToggle({
+   Name = "Tp kill v1",
+   CurrentValue = false,
+   Callback = function(Value) _G.TPKillV6_Enabled = Value end,
+})
+
+-- OPCIÓN DE TEAM CHECK (A petición tuya we)
+TabCombat:CreateToggle({
+   Name = "Team Check",
+   CurrentValue = false,
+   Callback = function(Value) _G.TeamCheck_V6 = Value end,
+})
+
+_G.TargetPlayer = "ALL"
+
+-- DROPDOWN ESTABLE
+local PlayerDropdown = TabCombat:CreateDropdown({
+   Name = "Seleccionar Objetivo 🎯",
+   Options = {"ALL"}, 
+   CurrentOption = {"ALL"},
+   MultipleOptions = false,
+   Flag = "TargetDropdown",
+   Callback = function(Option)
+      local Selected = type(Option) == "table" and Option[1] or Option
+      _G.TargetPlayer = Selected
+      Rayfield:Notify({
+         Title = "Z-SLX HUNTER",
+         Content = "Cazando a: " .. tostring(Selected),
+         Duration = 2
+      })
+   end,
+})
+
+-- FUNCIÓN PARA ACTUALIZAR SIN BUG
+local function UpdateList()
+    local pList = {"ALL"}
+    for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+        if v ~= game.Players.LocalPlayer then
+            table.insert(pList, v.Name)
+        end
+    end
+    PlayerDropdown:Refresh(pList, true)
+end
+
+-- ACTUALIZAR AUTOMÁTICAMENTE CUANDO ALGUIEN ENTRA O SALE
+game.Players.PlayerAdded:Connect(UpdateList)
+game.Players.PlayerRemoving:Connect(UpdateList)
+
+-- PRIMERA CARGA AL EJECUTAR
+UpdateList()
+
+-- BOTÓN OPCIONAL (Por si quieres forzarlo tú)
+TabCombat:CreateButton({
+   Name = "Forzar Refresco de Lista 🔄",
+   Callback = function()
+      UpdateList()
+      Rayfield:Notify({Title = "Z-SLX", Content = "Lista actualizada.", Duration = 1})
+   end,
+})
+
+-- INPUT DE DISTANCIA
+TabCombat:CreateInput({
+   Name = "Distancia de Cabeza",
+   PlaceholderText = "Escribe 1-15 (Ej: 5)",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+      local num = tonumber(Text)
+      if num then _G.V6_Dist = num end
+   end,
+})
+
+local SectionFl = TabCombat:CreateSection("Fake lag 💻")
+
+_G.FakeLag_Enabled = false
+_G.FreezeTime = 5 -- Tiempo por defecto
+
+TabCombat:CreateButton({
+   Name = "ACTIVAR HARD-FREEZE ❄️",
+   Callback = function()
+      if not _G.FakeLag_Enabled then
+         _G.FakeLag_Enabled = true
+         Rayfield:Notify({Title = "Z-SLX", Content = "Enemigos congelados por " .. _G.FreezeTime .. " segundos!", Duration = 3})
+         
+         -- TIMER PARA DESACTIVAR SOLO
+         task.delay(_G.FreezeTime, function()
+            _G.FakeLag_Enabled = false
+            Rayfield:Notify({Title = "Z-SLX", Content = "Tiempo agotado. Descongelando...", Duration = 2})
+         end)
+      end
+   end,
+})
+
+TabCombat:CreateSlider({
+   Name = "Segundos de Congelamiento",
+   Range = {1, 20},
+   Increment = 1,
+   CurrentValue = 5,
+   Callback = function(Value) _G.FreezeTime = Value end,
+})
+
+local Sectionhit = TabCombat:CreateSection("Anti Hit 🤺")
+
+-- [[ CONFIGURACIÓN ANTI-HIT Z-SLX ]]
+_G.AntiHit_Enabled = false
+_G.AntiHit_Radius = 10 
+
+TabCombat:CreateToggle({
+   Name = "Activar Anti-Hit Aura",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.AntiHit_Enabled = Value 
+      Rayfield:Notify({
+         Title = "Z-SLX DEFENSE",
+         Content = Value and "Aura activada. Nadie se te va a acercar, we." or "Aura desactivada.",
+         Duration = 2
+      })
+   end,
+})
+
+TabCombat:CreateSlider({
+   Name = "Radio de Detección",
+   Range = {5, 30},
+   Increment = 1,
+   CurrentValue = 10,
+   Callback = function(Value) 
+      _G.AntiHit_Radius = Value 
+   end,
+})
+
+local SectionGhost = TabCombat:CreateSection("Invisible FE 👻")
+
+TabCombat:CreateToggle({
+   Name = "Activar Invisible FE (FIX)",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.ModoGhostFE = Value 
+      -- Esto te pone transparente solo a ti para que sepas que jaló
+      if game.Players.LocalPlayer.Character then
+          for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+              if v:IsA("BasePart") or v:IsA("Decal") then
+                  v.Transparency = Value and 0.5 or 0
+              end
+          end
+      end
+      Rayfield:Notify({
+         Title = "Z-SLX GHOST",
+         Content = Value and "Invisible FE Activo. ¡A darle, we!" or "Regresando a la normalidad.",
+         Duration = 2
+      })
+   end,
+})
+
+local TabVisuals = Window:CreateTab("Visuals 🏈", 4483362458)
+
+local SectionVisuals = TabVisuals:CreateSection("Z-SLX: VISIÓN NOCTURNA 🟢")
+
+TabVisuals:CreateToggle({
+   Name = "Night Vision Z",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.NightVision_Enabled = Value 
+      Rayfield:Notify({Title = "Z-SLX", Content = Value and "Visión Nocturna ON" or "Visión Nocturna OFF", Duration = 2})
+   end,
+})
+
+local SectionCam = TabVisuals:CreateSection("Z-SLX: CÁMARA & VISIÓN 👁️")
+
+_G.CustomFOV = 70 -- FOV por defecto de Roblox
+
+TabVisuals:CreateSlider({
+   Name = "(FOV)",
+   Range = {1, 120},
+   Increment = 1,
+   CurrentValue = 70,
+   Callback = function(Value) 
+      _G.CustomFOV = Value 
+   end,
+})
+
+local SectionTracers = TabVisuals:CreateSection("Z-SLX: TRACERS CONFIG 📏")
+
+_G.Tracers_Enabled = false
+_G.Tracer_Origin = "Abajo" -- Por defecto sale de los pies
+
+-- 1. SWITCH DE ACTIVAR
+TabVisuals:CreateToggle({
+   Name = "Activar Tracers (Team Color)",
+   CurrentValue = false,
+   Flag = "TracersToggle",
+   Callback = function(Value)
+      _G.Tracers_Enabled = Value
+   end,
+})
+
+-- 2. LISTA DE POSICIÓN (DROPDOWN)
+TabVisuals:CreateDropdown({
+   Name = "Posición de Salida",
+   Options = {"Abajo", "Centro", "Arriba"},
+   CurrentOption = {"Abajo"},
+   MultipleOptions = false,
+   Flag = "TracerPos",
+   Callback = function(Option)
+      -- Rayfield devuelve una tabla, agarramos el primero
+      _G.Tracer_Origin = Option[1] 
+   end,
+})
+
+local SectionShadow = TabVisuals:CreateSection("Z-SLX: Esp v2")
+
+_G.Shadow_Enabled = false
+_G.Shadow_Fill = 0 -- Transparencia del relleno (0 = Sólido, 1 = Invisible)
+_G.Shadow_Outline = 0 -- Transparencia del borde (0 = Visible, 1 = Invisible)
+
+TabVisuals:CreateToggle({
+   Name = "Esp v2",
+   CurrentValue = false,
+   Callback = function(Value) 
+      _G.Shadow_Enabled = Value 
+   end,
+})
+
+TabVisuals:CreateSlider({
+   Name = "Transparenci",
+   Range = {0, 1},
+   Increment = 0.1,
+   CurrentValue = 0,
+   Callback = function(Value) 
+      _G.Shadow_Fill = Value 
+   end,
+})
+
+TabVisuals:CreateSlider({
+   Name = "Transparenci",
+   Range = {0, 1},
+   Increment = 0.1,
+   CurrentValue = 0,
+   Callback = function(Value) 
+      _G.Shadow_Outline = Value 
+   end,
+})
+
+local SectionESP = TabVisuals:CreateSection("Z-SLX: ESP BOX 📦")
+
+_G.ESP_Enabled = false 
+
+TabVisuals:CreateToggle({
+   Name = "ESP Box (Team Color)",
+   CurrentValue = false,
+   Flag = "ESPBoxToggle",
+   Callback = function(Value)
+      _G.ESP_Enabled = Value
+   end,
+})
+
+local SectionInv = TabVisuals:CreateSection("Z-SLX: VISUAL INVENTORY 🎒")
+
+_G.VisualInv_Enabled = false
+
+TabVisuals:CreateToggle({
+   Name = "Inventory GUI (Cuadros Reales)",
+   CurrentValue = false,
+   Flag = "InvGUI",
+   Callback = function(Value)
+      _G.VisualInv_Enabled = Value
+   end,
+})
+
+local TabBypass = Window:CreateTab("Bypass ⚓", 4483362458)
+
+local SectionFlyZ = TabBypass:CreateSection("Fly (Heroica, Nogales) ✈️")
+
+    _G.FlyZ_Enabled = false
+    _G.FlyZ_Speed = 50
+
+    TabBypass:CreateToggle({
+       Name = "Fly (🔥)",
+       CurrentValue = false,
+       Flag = "ToggleFlyZ",
+       Callback = function(Value)
+          _G.FlyZ_Enabled = Value
+       end,
+    })
+
+    TabBypass:CreateInput({
+       Name = "Speed Fly",
+       PlaceholderText = "Speed...",
+       RemoveTextAfterFocusLost = false,
+       Callback = function(Text)
+          local num = tonumber(Text)
+          if num then
+              _G.FlyZ_Speed = num
+              print("Z-Hub: Speed: " .. num)
+          end
+       end,
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local SectionSpeedZ = TabBypass:CreateSection("Speed (Heroica, nogales) ⚡")
+
+_G.SpeedZ_Enabled = false
+_G.SpeedZ_Value = 50
+
+TabBypass:CreateToggle({
+   Name = "Speed (🔥)",
+   CurrentValue = false,
+   Flag = "ToggleSpeedZ",
+   Callback = function(Value)
+      _G.SpeedZ_Enabled = Value
+   end,
+})
+
+TabBypass:CreateInput({
+   Name = "Velocidad ?",
+   PlaceholderText = "Velocidad...",
+   RemoveTextAfterFocusLost = false,
+   Callback = function(Text)
+      local num = tonumber(Text)
+      if num then
+          _G.SpeedZ_Value = num
+          print("Z-Hub: Speed set to: " .. num)
+      end
+   end,
+})
+
+local TabSword = Window:CreateTab(" Others ", 4483362458)
+
+-- [[ Z-SLX: MODO MINECRAFT 144p (FPS AL MÁXIMO) ]]
+local SectionSwordFPS = TabSword:CreateSection("Z-SLX: FPS⚡")
+
+TabSword:CreateButton({
+   Name = "🚀 FPS",
+   Callback = function()
+        -- 1. BAJAR LA CALIDAD INTERNA DEL MOTOR (EL SECRETO)
+        settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        
+        local g = game
+        local w = g.Workspace
+        local l = g.Lighting
+        local t = w.Terrain
+
+        -- 2. MATAR LA LUZ Y EL CIELO
+        l.GlobalShadows = false
+        l.FogEnd = 9e9
+        l.Brightness = 0 -- Cero brillo bonito
+        l.Ambient = Color3.fromRGB(120, 120, 120) -- Luz gris plana y fea
+        l.OutdoorAmbient = Color3.fromRGB(120, 120, 120)
+
+        -- Destruir el cielo y los filtros
+        for _, v in pairs(l:GetChildren()) do
+            if v:IsA("Atmosphere") or v:IsA("Sky") or v:IsA("PostEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("BloomEffect") or v:IsA("BlurEffect") or v:IsA("SunRaysEffect") then
+                v:Destroy()
+            end
+        end
+
+        -- 3. TERRENO PLANO (SIN PASTO, SIN AGUA REALISTA)
+        t.WaterWaveSize = 0
+        t.WaterWaveSpeed = 0
+        t.WaterReflectance = 0
+        t.WaterTransparency = 1
+        t.Decoration = false 
+
+        -- Seguro contra pasto necio
+        t:GetPropertyChangedSignal("Decoration"):Connect(function()
+            t.Decoration = false
+        end)
+
+        -- 4. EL CONVERTIDOR A MODO PAPA
+        local function PotatoMode(v)
+            pcall(function()
+                if v:IsA("BasePart") or v:IsA("MeshPart") then
+                    v.Material = Enum.Material.Plastic -- Plástico normal (más feo y ligero)
+                    v.Reflectance = 0
+                    v.CastShadow = false
+                    if v:IsA("MeshPart") then
+                        v.TextureID = "" -- Borra la textura 3D del objeto
+                    end
+                elseif v:IsA("Decal") or v:IsA("Texture") or v:IsA("SurfaceAppearance") then
+                    v:Destroy() -- Eliminar imágenes pegadas
+                elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+                    v:Destroy()
+                elseif v:IsA("SpecialMesh") then
+                    v.TextureId = ""
+                end
+            end)
+        end
+
+        -- Bucle infernal para destruir los gráficos de todo el mapa
+        task.spawn(function()
+            for i, v in pairs(w:GetDescendants()) do
+                PotatoMode(v)
+                if i % 250 == 0 then task.wait() end -- Anti-crasheo
+            end
+            print("✅ Z-SLX: GRÁFICOS DESTRUIDOS. BIENVENIDO A 1998.")
+        end)
+
+        -- Para lo que vaya spawneando (balas, jugadores nuevos, etc.)
+        w.DescendantAdded:Connect(function(v)
+            task.spawn(function() PotatoMode(v) end)
+        end)
+   end,
+})
+
+-- [[ Z-SLX: MONITOR DE STATS (FPS / PING / MEMORIA) ]]
+local SectionStats = TabSword:CreateSection("Z-SLX: MONITOR DE SISTEMA 📊")
+
+_G.StatsHUD_Enabled = false
+
+TabSword:CreateToggle({
+   Name = "Mostrar Monitor (FPS/PING)",
+   CurrentValue = false,
+   Flag = "ToggleStats",
+   Callback = function(Value)
+      _G.StatsHUD_Enabled = Value
+      
+      local CoreGui = game:GetService("CoreGui")
+      local RunService = game:GetService("RunService")
+      local Players = game:GetService("Players")
+      local LocalPlayer = Players.LocalPlayer
+      
+      -- Si lo apagamos, borramos la barra
+      if not Value then
+          if CoreGui:FindFirstChild("ZSLX_StatsHUD") then
+              CoreGui.ZSLX_StatsHUD:Destroy()
+          end
+          return
+      end
+
+      -- CREACIÓN DE LA BARRA FLOTANTE
+      local Screen = Instance.new("ScreenGui")
+      Screen.Name = "ZSLX_StatsHUD"
+      Screen.ResetOnSpawn = false
+      Screen.Parent = CoreGui
+
+      local Frame = Instance.new("Frame")
+      Frame.Size = UDim2.new(0, 300, 0, 35)
+      Frame.Position = UDim2.new(0.5, -150, 0.5, -17) -- En el mero centro
+      Frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- Negro elegante
+      Frame.BorderSizePixel = 0
+      Frame.Active = true
+      Frame.Parent = Screen
+
+      local Corner = Instance.new("UICorner")
+      Corner.CornerRadius = UDim.new(0, 8)
+      Corner.Parent = Frame
+
+      local Stroke = Instance.new("UIStroke")
+      Stroke.Color = Color3.fromRGB(0, 255, 255) -- Borde Cyan Z-SLX
+      Stroke.Thickness = 1.5
+      Stroke.Parent = Frame
+
+      local TextLabel = Instance.new("TextLabel")
+      TextLabel.Size = UDim2.new(1, 0, 1, 0)
+      TextLabel.BackgroundTransparency = 1
+      TextLabel.Font = Enum.Font.GothamBold
+      TextLabel.TextSize = 14
+      TextLabel.TextColor3 = Color3.new(1, 1, 1)
+      TextLabel.Text = "Cargando Stats..."
+      TextLabel.Parent = Frame
+
+      -- [[ SISTEMA PARA ARRASTRAR (DRAGGABLE) CELULAR Y PC ]]
+      local UserInputService = game:GetService("UserInputService")
+      local dragging, dragInput, dragStart, startPos
+
+      Frame.InputBegan:Connect(function(input)
+          if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+              dragging = true
+              dragStart = input.Position
+              startPos = Frame.Position
+              
+              input.Changed:Connect(function()
+                  if input.UserInputState == Enum.UserInputState.End then dragging = false end
+              end)
+          end
+      end)
+
+      Frame.InputChanged:Connect(function(input)
+          if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+              dragInput = input
+          end
+      end)
+
+      UserInputService.InputChanged:Connect(function(input)
+          if input == dragInput and dragging then
+              local delta = input.Position - dragStart
+              Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+          end
+      end)
+
+      -- [[ BUCLE DE ACTUALIZACIÓN (TIEMPO REAL) ]]
+      local lastUpdate = 0
+      RunService.RenderStepped:Connect(function(deltaTime)
+          if not _G.StatsHUD_Enabled then return end
+          
+          -- Actualizamos cada 0.2 segundos para que los números no parpadeen a lo loco
+          if tick() - lastUpdate > 0.2 then
+              lastUpdate = tick()
+              
+              -- Calcular FPS
+              local fps = math.floor(1 / deltaTime)
+              
+              -- Calcular Ping (ms)
+              local ping = 0
+              pcall(function() ping = math.floor(LocalPlayer:GetNetworkPing() * 1000) end)
+              
+              -- Calcular Memoria (simulando "CPU")
+              local mem = math.floor(game:GetService("Stats"):GetTotalMemoryUsageMb())
+              
+              -- Formato de la perra barra
+              TextLabel.Text = string.format(" | FPS: %d | PING: %d ms | MEM: %d MB | ", fps, ping, mem)
+              
+              -- Cambiar de color el FPS si baja mucho (Opcional, se ve pro)
+              if fps < 30 then
+                  TextLabel.TextColor3 = Color3.fromRGB(255, 50, 50) -- Rojo si hay lag
+              elseif fps < 60 then
+                  TextLabel.TextColor3 = Color3.fromRGB(255, 255, 0) -- Amarillo
+              else
+                  TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255) -- Blanco si va joya
+              end
+          end
+      end)
+   end,
+})
+
+-- [[ LÓGICA MEJORADA CON SELECTOR ]]
+local function GetClosestPlayer()
+    local Target = nil
+    local Distance = _G.FOVSize * 4 
+
+    for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+        if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild(_G.AimPart) and v.Character:FindFirstChild("Humanoid") then
+            
+            -- Anti-Bot Automático (Sigue activo por defecto)
+            if v.Character.Humanoid.Health <= 0 or v.Character:FindFirstChild("IsAnNPC") then continue end
+            if _G.TeamCheck and v.Team == game.Players.LocalPlayer.Team then continue end
+            
+            local Pos, OnScreen = workspace.CurrentCamera:WorldToViewportPoint(v.Character[_G.AimPart].Position)
+            local Center = workspace.CurrentCamera.ViewportSize / 2
+            local Mag = (Vector2.new(Pos.X, Pos.Y) - Center).Magnitude
+
+            if Mag < Distance and OnScreen then
+                if _G.WallCheck then
+                    local Parts = workspace.CurrentCamera:GetPartsObscuringTarget({v.Character[_G.AimPart].Position}, {game.Players.LocalPlayer.Character, v.Character})
+                    if #Parts > 0 then continue end
+                end
+                Target = v
+                Distance = Mag
+            end
+        end
+    end
+    return Target
+end
+
+-- RENDER LOOP
+game:GetService("RunService").RenderStepped:Connect(function()
+    FOVCircle.Visible = _G.ShowFOV
+    FOVCircle.Radius = _G.FOVSize * 2
+    FOVCircle.Position = workspace.CurrentCamera.ViewportSize / 2
+
+    if _G.FOVRainbow then
+        FOVCircle.Color = Color3.fromHSV(tick() % 5 / 5, 1, 1)
+    else
+        FOVCircle.Color = Color3.fromRGB(255, 255, 255)
+    end
+
+    if _G.AimbotEnabled then
+        local Target = GetClosestPlayer()
+        if Target then
+            local LookPos = workspace.CurrentCamera.CFrame:Lerp(CFrame.new(workspace.CurrentCamera.CFrame.Position, Target.Character[_G.AimPart].Position), 1/_G.AimbotStrength)
+            workspace.CurrentCamera.CFrame = LookPos
+        end
+    end
+end)
+
+-- [[ MOTOR Z-SLX HITBOX LITE FINAL: TEAMCHECK V4 + FPS BOOST ]]
+_G.ForceReset = false
+_G.TeamCheck_V4 = true -- Activado por defecto para seguridad
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    -- Optimización: Si no hay nada que hacer, el script se duerme
+    if not _G.HitboxEnabled_V1 and not _G.ForceReset then return end
+    
+    local lp = game.Players.LocalPlayer
+    local targetSize = Vector3.new(_G.HitboxSize_V1, _G.HitboxSize_V1, _G.HitboxSize_V1)
+
+    for _, p in pairs(game.Players:GetPlayers()) do
+        if p ~= lp and p.Character then
+            local char = p.Character
+            
+            -- [[ BLOQUE DE LIMPIEZA / RESETEO ]]
+            if not _G.HitboxEnabled_V1 or _G.ForceReset then
+                for _, part in pairs(char:GetChildren()) do
+                    local orig = part:FindFirstChild("OriginalSize")
+                    if orig and part.Size ~= orig.Value then
+                        part.Size = orig.Value
+                        part.Transparency = 0
+                        part.Material = Enum.Material.Plastic
+                        part.CanCollide = true
+                    end
+                end
+                continue
+            end
+
+            -- [[ TEAMCHECK V4: BYPASS DE ALIADOS ]]
+            -- Si el TeamCheck está ON y el wey es de tu equipo, lo reseteamos a normal
+            if _G.TeamCheck_V4 and lp.Team and p.Team == lp.Team then
+                for _, part in pairs(char:GetChildren()) do
+                    local orig = part:FindFirstChild("OriginalSize")
+                    if orig and part.Size ~= orig.Value then
+                        part.Size = orig.Value
+                        part.Transparency = 0
+                    end
+                end
+                continue 
+            end
+
+            -- [[ SELECCIÓN MODULAR LITE ]]
+            local targetParts = {}
+            if _G.HitboxTarget == "Head" then
+                table.insert(targetParts, char:FindFirstChild("Head"))
+            elseif _G.HitboxTarget == "Torso" then
+                table.insert(targetParts, char:FindFirstChild("Torso") or char:FindFirstChild("UpperTorso"))
+            elseif _G.HitboxTarget == "Huesos (All)" then
+                local limbNames = {"Left Arm", "Right Arm", "Left Leg", "Right Leg", "LeftUpperArm", "RightUpperArm", "LeftUpperLeg", "RightUpperLeg"}
+                for _, name in pairs(limbNames) do
+                    table.insert(targetParts, char:FindFirstChild(name))
+                end
+            end
+
+            -- [[ APLICACIÓN BÉLICA ]]
+            for _, obj in pairs(targetParts) do
+                if obj and obj.Size ~= targetSize then
+                    -- Guardar original una sola vez para el reset
+                    if not obj:FindFirstChild("OriginalSize") then
+                        local s = Instance.new("Vector3Value", obj)
+                        s.Name = "OriginalSize"
+                        s.Value = obj.Size
+                    end
+                    
+                    -- Aplicar Hitbox Rojo Intenso
+                    obj.Size = targetSize
+                    obj.Transparency = 0.6
+                    obj.Color = Color3.fromRGB(255, 0, 0)
+                    obj.Material = Enum.Material.Neon
+                    obj.CanCollide = false
+                    obj.Massless = true
+                end
+            end
+        end
+    end
+    _G.ForceReset = false 
+end)
+
+-- [[ MOTOR OFICIAL Z-SLX V4.0 - HUNTER EDITION ]]
+_G.TPKillV6_Enabled = false
+_G.TeamCheck_V6 = false
+_G.V6_Dist = 5
+
+game:GetService("RunService").RenderStepped:Connect(function()
+    local lp = game.Players.LocalPlayer
+    local char = lp.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    
+    if not _G.TPKillV6_Enabled or not root then return end
+    
+    local targetPos = root.CFrame * CFrame.new(0, 0, -_G.V6_Dist)
+
+    for _, p in pairs(game.Players:GetPlayers()) do
+        -- FILTRO DE SELECCIÓN (Modo ALL o Modo Individual)
+        if _G.TargetPlayer ~= "ALL" and p.Name ~= _G.TargetPlayer then continue end
+
+        if p ~= lp and p.Character then
+            local eChar = p.Character
+            local hum = eChar:FindFirstChild("Humanoid")
+            local head = eChar:FindFirstChild("Head")
+            
+            -- 1. TEAM CHECK (Solo si no es un objetivo individual)
+            if _G.TargetPlayer == "ALL" and _G.TeamCheck_V6 and (p.Team == lp.Team or p.TeamColor == lp.TeamColor) then 
+                continue 
+            end
+
+            -- 2. FILTRO ANTI-INMORTALES
+            local isProtected = eChar:FindFirstChildOfClass("ForceField") 
+                                or eChar:FindFirstChild("ForceField") 
+                                or (hum and hum.Parent:FindFirstChild("ForceField"))
+
+            if isProtected then continue end
+
+            -- 3. EXTRACCIÓN DE CABEZA
+            if head and hum and hum.Health > 0 then
+                pcall(function()
+                    -- LIMPIEZA VISUAL
+                    for _, part in pairs(eChar:GetChildren()) do
+                        if part:IsA("BasePart") and part.Name ~= "Head" then
+                            part.Transparency = 1 
+                            part.CanCollide = false
+                        elseif part:IsA("Accessory") then
+                            part:Destroy()
+                        end
+                    end
+
+                    -- DESCONECTAR CUELLO
+                    local torso = eChar:FindFirstChild("Torso") or eChar:FindFirstChild("UpperTorso")
+                    local neck = head:FindFirstChild("Neck") or (torso and torso:FindFirstChild("Neck"))
+                    if neck then neck.Enabled = false end
+
+                    -- TP CABEZA (Sin arrastrar carros/asientos)
+                    head.CanCollide = false
+                    head.Massless = true
+                    head.Velocity = Vector3.new(0,0,0)
+                    head.CFrame = targetPos
+                    
+                    -- ESTILO BÉLICO NEON
+                    head.Color = Color3.fromRGB(255, 255, 255)
+                    head.Material = Enum.Material.Neon
+                end)
+            end
+        end
+    end
+end)
+
+-- [[ MOTOR DE DESINCRONIZACIÓN TOTAL (HARD-FREEZE V3.1 - RED BLOCK FIX) ]]
+local FrozenPositions = {} 
+local OriginBlock = nil -- Aquí guardamos el bloque rojo
+
+task.spawn(function()
+    while true do
+        if _G.FakeLag_Enabled then
+            -- CAPA 1: Lag extremo de entrada
+            pcall(function() settings().Network.IncomingReplicationLag = 999999 end)
+            
+            -- CREAR BLOQUE ROJO EN EL ORIGEN (Solo una vez al activar)
+            local lp = game.Players.LocalPlayer
+            if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") and not OriginBlock then
+                OriginBlock = Instance.new("Part")
+                OriginBlock.Name = "ZSLX_LagOrigin"
+                OriginBlock.Size = Vector3.new(4, 5, 1) -- Tamaño tipo humano
+                OriginBlock.CFrame = lp.Character.HumanoidRootPart.CFrame
+                OriginBlock.Anchored = true
+                OriginBlock.CanCollide = false
+                OriginBlock.Color = Color3.fromRGB(255, 0, 0) -- ROJO BÉLICO
+                OriginBlock.Material = Enum.Material.Neon
+                OriginBlock.Transparency = 0.4 -- Un poco transparente para que se vea pro
+                OriginBlock.Parent = workspace
+                
+                -- Efecto visual: un cilindro o algo para que resalte (opcional)
+                local box = Instance.new("SelectionBox")
+                box.Adornee = OriginBlock
+                box.Color3 = Color3.fromRGB(255, 0, 0)
+                box.Parent = OriginBlock
+            end
+
+            -- CAPA 2: SECUESTRO DE POSICIONES
+            for _, p in pairs(game:GetService("Players"):GetPlayers()) do
+                if p ~= lp then 
+                    if p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        local hrp = p.Character.HumanoidRootPart
+                        
+                        if not FrozenPositions[p.Name] then
+                            FrozenPositions[p.Name] = hrp.CFrame
+                        end
+                        
+                        hrp.CFrame = FrozenPositions[p.Name]
+                        hrp.Velocity = Vector3.new(0, 0, 0)
+                        hrp.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+                    end
+                end
+            end
+        else
+            -- RESET TOTAL CUANDO EL TIMER SE APAGA
+            if next(FrozenPositions) ~= nil or OriginBlock then
+                pcall(function() settings().Network.IncomingReplicationLag = 0 end)
+                FrozenPositions = {}
+                
+                -- BORRAR BLOQUE ROJO
+                if OriginBlock then
+                    OriginBlock:Destroy()
+                    OriginBlock = nil
+                end
+            end
+        end
+        game:GetService("RunService").Heartbeat:Wait() 
+    end
+end)
+
+-- [[ MOTOR ANTI-HIT V2 - Z-SLX BÉLICO ]]
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+
+-- Crear el Anillo (Sin relleno usando un Adornment)
+local Ring = Instance.new("CylinderHandleAdornment")
+Ring.Name = "ZSLX_AntiHit_Ring"
+Ring.Color3 = Color3.fromRGB(255, 0, 0)
+Ring.Transparency = 0.2
+Ring.Adornee = workspace.Terrain -- Referencia global
+Ring.AlwaysOnTop = false -- Para que se vea en el piso
+Ring.ZIndex = 5
+Ring.Height = 0.5 -- Grosor del anillo
+Ring.Parent = workspace.Terrain
+
+-- Función para TP de Escape (25 Bloques de distancia)
+local function SafeTP()
+    if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = lp.Character.HumanoidRootPart
+        -- Dirección aleatoria pero potente
+        local randomDir = Vector3.new(math.random(-10, 10), 0, math.random(-10, 10)).Unit
+        if randomDir.Magnitude == 0 then randomDir = Vector3.new(1,0,1) end
+        
+        hrp.CFrame = hrp.CFrame + (randomDir * 30) -- SALTO DE 25 BLOQUES
+    end
+end
+
+task.spawn(function()
+    while true do
+        if _G.AntiHit_Enabled and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+            local myHrp = lp.Character.HumanoidRootPart
+            local radius = _G.AntiHit_Radius
+            
+            -- Actualizar Anillo Visual (HUECO)
+            Ring.Visible = true
+            Ring.InnerRadius = radius - 0.5 -- ¡AQUÍ ESTÁ EL TRUCO DEL HUECO!
+            Ring.Radius = radius
+            Ring.CFrame = CFrame.new(myHrp.Position - Vector3.new(0, 2.5, 0)) * CFrame.Angles(math.rad(90), 0, 0)
+            
+            -- Detectar Enemigos con Team Check
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    
+                    -- 1. REVISIÓN DE EQUIPO (Team Check)
+                    if p.Team == lp.Team or p.TeamColor == lp.TeamColor then 
+                        continue -- Si es amigo, no hace nada
+                    end
+                    
+                    local enemyHrp = p.Character.HumanoidRootPart
+                    local distance = (myHrp.Position - enemyHrp.Position).Magnitude
+                    
+                    -- 2. DISPARADOR DE TP
+                    if distance <= radius then
+                        SafeTP()
+                        Rayfield:Notify({
+                            Title = "Z-SLX DEFENSE", 
+                            Content = "Enemigo cerca! Salto de 25 bloques activado.", 
+                            Duration = 1.5
+                        })
+                        task.wait(0.3) -- Cooldown para que no parezca lag infinito
+                    end
+                end
+            end
+        else
+            Ring.Visible = false -- Apagar si no está activo
+        end
+        RunService.Heartbeat:Wait()
+    end
+end)
+
+-- [[ MOTOR DE DESINCRONIZACIÓN Z-SLX V6 ]]
+_G.ModoGhostFE = false
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    local lp = game.Players.LocalPlayer
+    local char = lp.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    local hum = char and char:FindFirstChild("Humanoid")
+
+    if _G.ModoGhostFE and root and hum and hum.Health > 0 then
+        local oldPos = root.CFrame
+        -- Te manda al vacío para que nadie te pegue
+        root.CFrame = oldPos * CFrame.new(0, -50000, 0)
+        
+        -- Fix de Cámara: Mantiene tu vista donde está la acción
+        hum.CameraOffset = Vector3.new(0, 50000, 0)
+        
+        -- Regreso instantáneo: El secreto para que el arma dispare
+        game:GetService("RunService").RenderStepped:Wait()
+        root.CFrame = oldPos
+    elseif hum then
+        -- Limpiamos la cámara si se apaga el Ghost
+        hum.CameraOffset = Vector3.new(0, 0, 0)
+    end
+end)
+
+-- [[ MOTOR Z-SLX: NIGHT VISION SIERRA (OPTIMIZADO) ]]
+local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Atmosphere = Lighting:FindFirstChildOfClass("Atmosphere")
+
+-- Creamos el efecto si no existe
+local NVG_Effect = Lighting:FindFirstChild("ColornvgSierraMX") or Instance.new("ColorCorrectionEffect", Lighting)
+NVG_Effect.Name = "ColornvgSierraMX"
+
+-- Escuchamos el cambio del Toggle
+task.spawn(function()
+    while task.wait(0.2) do -- Un check rápido pero ligero
+        if _G.NightVision_Enabled then
+            -- 1. BYPASS DE NIEBLA (Mandamos la atmósfera al sótano)
+            if Atmosphere and Atmosphere.Parent == Lighting then
+                Atmosphere.Parent = ReplicatedStorage
+            end
+            
+            -- 2. CONFIGURACIÓN BÉLICA
+            Lighting.ExposureCompensation = 3 
+            NVG_Effect.Enabled = true
+            NVG_Effect.Brightness = 0.1
+            NVG_Effect.Contrast = 0.8
+            NVG_Effect.Saturation = -1 
+            NVG_Effect.TintColor = Color3.fromRGB(50, 255, 50) -- Verde Intenso
+        else
+            -- 3. RESTAURAR TODO (A la normalidad)
+            if Atmosphere and Atmosphere.Parent == ReplicatedStorage then
+                Atmosphere.Parent = Lighting
+            end
+            
+            Lighting.ExposureCompensation = 0
+            NVG_Effect.Enabled = false
+            NVG_Effect.TintColor = Color3.fromRGB(255, 255, 255)
+            NVG_Effect.Saturation = 0
+            NVG_Effect.Contrast = 0
+        end
+    end
+end)
+
+-- [[ MOTOR Z-SLX: FOV CHANGER (FORZADO) ]]
+game:GetService("RunService").RenderStepped:Connect(function()
+    local cam = workspace.CurrentCamera
+    if cam and cam.FieldOfView ~= _G.CustomFOV then
+        -- Aplicamos el FOV de tu Slider
+        cam.FieldOfView = _G.CustomFOV
+    end
+end)
+
+--// ========================================== //--
+--//    MOTOR TRACERS Z-SLX (SIERRA STABLE)     //--
+--// ========================================== //--
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- Variables de Configuración (Por si no usas el menú)
+if _G.Tracers_Enabled == nil then _G.Tracers_Enabled = true end
+if _G.Tracer_Origin == nil then _G.Tracer_Origin = "Abajo" end
+
+local function ObtenerCarpetaMaestra()
+    local gui = LocalPlayer.PlayerGui:FindFirstChild("Master_Tracers")
+    if not gui then
+        gui = Instance.new("ScreenGui")
+        gui.Name = "Master_Tracers"
+        gui.IgnoreGuiInset = true
+        gui.ResetOnSpawn = false 
+        gui.DisplayOrder = 999
+        gui.Parent = LocalPlayer.PlayerGui
+    end
+    return gui
+end
+
+local function ObtenerTracer(player)
+    local folder = ObtenerCarpetaMaestra()
+    local name = "Line_" .. player.Name
+    local line = folder:FindFirstChild(name)
+    if not line then
+        line = Instance.new("Frame")
+        line.Name = name
+        line.BorderSizePixel = 0
+        -- [[ EL SECRETO ANTI-TEMBLOR ]]
+        -- El punto de anclaje en el medio (0.5, 0.5) hace que la rotación sea perfecta
+        line.AnchorPoint = Vector2.new(0.5, 0.5) 
+        line.Visible = false
+        line.Parent = folder
+    end
+    return line
+end
+
+RunService.RenderStepped:Connect(function()
+    -- 1. Si está apagado, ocultar todo y salir
+    if not _G.Tracers_Enabled then
+        local gui = LocalPlayer.PlayerGui:FindFirstChild("Master_Tracers")
+        if gui then
+            for _, child in pairs(gui:GetChildren()) do child.Visible = false end
+        end
+        return
+    end
+
+    local cam = workspace.CurrentCamera
+    if not cam then return end
+
+    -- 2. CALCULAR EL PUNTO DE INICIO (TU LISTA)
+    local StartPos = Vector2.new(cam.ViewportSize.X / 2, cam.ViewportSize.Y) -- Default: Abajo
+
+    if _G.Tracer_Origin == "Centro" then
+        StartPos = Vector2.new(cam.ViewportSize.X / 2, cam.ViewportSize.Y / 2)
+    elseif _G.Tracer_Origin == "Arriba" then
+        StartPos = Vector2.new(cam.ViewportSize.X / 2, 0)
+    end
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            local line = ObtenerTracer(player)
+            local char = player.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            local hum = char and char:FindFirstChild("Humanoid")
+
+            if hrp and hum and hum.Health > 0 then
+                
+                -- 3. CALCULAR DESTINO (ENEMIGO)
+                local ScreenPoint, OnScreen = cam:WorldToViewportPoint(hrp.Position)
+                local EndPos = Vector2.new(ScreenPoint.X, ScreenPoint.Y)
+
+                -- LÓGICA 360 (INVERTIR SI ESTÁ ATRÁS)
+                if ScreenPoint.Z < 0 then
+                   local InvPos = (EndPos - Vector2.new(cam.ViewportSize.X/2, cam.ViewportSize.Y/2)).Unit * 1000
+                   EndPos = Vector2.new(cam.ViewportSize.X/2, cam.ViewportSize.Y/2) - InvPos
+                end
+
+                -- 4. MATEMÁTICAS DE DIBUJO (ANTI-SHAKE)
+                -- Calculamos el centro entre el Inicio y el Fin
+                local Center = (StartPos + EndPos) / 2
+                -- Calculamos la distancia (Largo de la línea)
+                local Distance = (StartPos - EndPos).Magnitude
+                -- Calculamos el ángulo de rotación
+                local Angle = math.atan2(EndPos.Y - StartPos.Y, EndPos.X - StartPos.X)
+
+                -- APLICAR PROPIEDADES
+                line.Visible = true
+                line.Size = UDim2.new(0, Distance, 0, 1.5) -- Grosor fijo
+                line.Position = UDim2.new(0, Center.X, 0, Center.Y) -- Posición absoluta
+                line.Rotation = math.deg(Angle)
+
+                -- 5. TEAM COLOR AUTOMÁTICO
+                if player.TeamColor then
+                    line.BackgroundColor3 = player.TeamColor.Color
+                else
+                    line.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+                end
+            else
+                if line then line.Visible = false end
+            end
+        end
+    end
+end)
+
+-- Limpieza si se salen
+Players.PlayerRemoving:Connect(function(player)
+    local folder = LocalPlayer.PlayerGui:FindFirstChild("Master_Tracers")
+    if folder then
+        local line = folder:FindFirstChild("Line_" .. player.Name)
+        if line then line:Destroy() end
+    end
+end)
+
+-- [[ MOTOR Z-SLX: SHADOW HIGHLIGHT (NATIVE) ]]
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Nombre clave para identificar nuestros efectos y borrarlos
+local HIGHLIGHT_NAME = "Z_Shadow_Effect"
+
+-- Función de Limpieza Masiva (Nuclear)
+local function ClearShadows()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Character then
+            local hl = p.Character:FindFirstChild(HIGHLIGHT_NAME)
+            if hl then hl:Destroy() end
+        end
+    end
+end
+
+RunService.RenderStepped:Connect(function()
+    -- 1. Si está apagado, aseguramos que el mapa esté limpio
+    if not _G.Shadow_Enabled then
+        -- Hacemos un check rápido: Si encuentro uno, lanzo limpieza masiva
+        -- Esto evita correr el loop de borrado 60 veces por segundo innecesariamente
+        for _, p in pairs(Players:GetPlayers()) do
+            if p.Character and p.Character:FindFirstChild(HIGHLIGHT_NAME) then
+                ClearShadows()
+                break
+            end
+        end
+        return
+    end
+
+    -- 2. Loop de Aplicación
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then
+            local Char = p.Character
+            
+            -- Solo aplicamos si está vivo (HumanoidCheck)
+            local Hum = Char:FindFirstChild("Humanoid")
+            if Hum and Hum.Health > 0 then
+                
+                -- Buscamos el Highlight existente o creamos uno nuevo
+                local HL = Char:FindFirstChild(HIGHLIGHT_NAME)
+                
+                if not HL then
+                    HL = Instance.new("Highlight")
+                    HL.Name = HIGHLIGHT_NAME
+                    HL.Adornee = Char
+                    HL.Parent = Char
+                    HL.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- Ver a través de paredes
+                end
+
+                -- 3. Actualización de Propiedades en Vivo (Live Update)
+                -- Color del Equipo
+                local TeamColor = Color3.fromRGB(255, 255, 255) -- Blanco por defecto
+                if p.TeamColor then
+                    TeamColor = p.TeamColor.Color
+                end
+
+                HL.FillColor = TeamColor
+                HL.OutlineColor = Color3.fromRGB(255, 255, 255) -- Borde blanco para resaltar
+                
+                -- Transparencias (Controladas por Sliders)
+                HL.FillTransparency = _G.Shadow_Fill or 0.5
+                HL.OutlineTransparency = _G.Shadow_Outline or 0
+                
+            else
+                -- Si está muerto, le quitamos el Highlight para no ver fantasmas en el piso
+                local hl = Char:FindFirstChild(HIGHLIGHT_NAME)
+                if hl then hl:Destroy() end
+            end
+        end
+    end
+end)
+
+-- Limpieza al salir del juego
+Players.PlayerRemoving:Connect(function(p)
+    if p.Character then
+        local hl = p.Character:FindFirstChild(HIGHLIGHT_NAME)
+        if hl then hl:Destroy() end
+    end
+end)
+
+-- [[ Z-SLX: ESP SIMPLE (SOLO BOX + TEAM COLOR) ]]
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+
+-- Almacén de dibujos
+local Drawings = {}
+
+local function RemoveESP(plr)
+    if Drawings[plr] then
+        -- Borramos la caja si el jugador se sale o muere
+        if Drawings[plr].Box then
+            Drawings[plr].Box:Remove()
+        end
+        Drawings[plr] = nil
+    end
+end
+
+RunService.RenderStepped:Connect(function()
+    -- 1. Si está apagado, escondemos todo
+    if not _G.ESP_Enabled then
+        for _, set in pairs(Drawings) do
+            if set.Box then set.Box.Visible = false end
+        end
+        return
+    end
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            -- CREAR DIBUJOS SI NO EXISTEN
+            if not Drawings[plr] then
+                Drawings[plr] = {
+                    Box = Drawing.new("Square"),
+                    -- YA NO HAY BARRAS AQUÍ, SOLO CAJA
+                }
+                -- Configuración inicial
+                Drawings[plr].Box.Thickness = 1.5
+                Drawings[plr].Box.Filled = false
+                Drawings[plr].Box.Transparency = 1
+            end
+
+            local D = Drawings[plr]
+            local Char = plr.Character
+            
+            -- CHECK DE VIDA O MUERTE
+            if Char and Char:FindFirstChild("HumanoidRootPart") and Char:FindFirstChild("Humanoid") and Char.Humanoid.Health > 0 then
+                local Hum = Char.Humanoid
+                local HRP = Char.HumanoidRootPart
+                local Pos, OnScreen = Camera:WorldToViewportPoint(HRP.Position)
+
+                if OnScreen then
+                    -- CÁLCULOS DE TAMAÑO (Tu matemática original)
+                    local Size = (Hum.RigType == Enum.HumanoidRigType.R6 and 3 or 3.5)
+                    local Top = Camera:WorldToViewportPoint(HRP.Position + Vector3.new(0, Size, 0))
+                    local Bottom = Camera:WorldToViewportPoint(HRP.Position - Vector3.new(0, Size + 1.5, 0))
+                    local Height = math.abs(Top.Y - Bottom.Y)
+                    local Width = Height / 1.6
+                    local BoxPos = Vector2.new(Pos.X - Width / 2, Pos.Y - Height / 2)
+
+                    -- 1. DIBUJAR CAJA
+                    D.Box.Size = Vector2.new(Width, Height)
+                    D.Box.Position = BoxPos
+                    D.Box.Visible = true
+                    
+                    -- [[ TEAM COLOR FIX ]]
+                    -- Si tiene equipo, usa su color. Si no, usa Blanco.
+                    if plr.TeamColor then
+                        D.Box.Color = plr.TeamColor.Color
+                    else
+                        D.Box.Color = Color3.new(1, 1, 1)
+                    end
+
+                else
+                    -- No en pantalla
+                    D.Box.Visible = false
+                end
+            else
+                -- Muerto o sin personaje
+                D.Box.Visible = false
+            end
+        else
+            -- Si el jugador se fue, limpiar
+            if Drawings[plr] then RemoveESP(plr) end
+        end
+    end
+end)
+
+Players.PlayerRemoving:Connect(RemoveESP)
+
+-- [[ Z-SLX: INVENTORY GUI V2 (ADORNEE FIX + MULTI-TARGET) ]]
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- 1. CARPETA BLINDADA (Aquí guardamos los GUIs para que nunca se borren)
+local function GetMasterFolder()
+    local folder = LocalPlayer.PlayerGui:FindFirstChild("ZSLX_InvFolder")
+    if not folder then
+        folder = Instance.new("ScreenGui")
+        folder.Name = "ZSLX_InvFolder"
+        folder.ResetOnSpawn = false -- ¡CLAVE! No se borra cuando tú mueres
+        folder.Parent = LocalPlayer.PlayerGui
+    end
+    return folder
+end
+
+local InvGuis = {}
+
+local function RemoveGUI(plr)
+    if InvGuis[plr] then
+        if InvGuis[plr].Bill then InvGuis[plr].Bill:Destroy() end
+        InvGuis[plr] = nil
+    end
+end
+
+-- 2. CREADOR DE CUADRITOS (MEJORADO)
+local function CreateSlot(tool, parent, isEquipped, teamColor)
+    local Slot = Instance.new("Frame")
+    Slot.Size = UDim2.new(0, 35, 0, 35) -- Un poco más compactos para que quepan bien
+    Slot.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    Slot.BorderSizePixel = 0
+    Slot.Parent = parent
+
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 6)
+    Corner.Parent = Slot
+
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Parent = Slot
+    
+    if isEquipped then
+        Stroke.Color = teamColor
+        Stroke.Thickness = 2.5
+    else
+        Stroke.Color = Color3.fromRGB(100, 100, 100)
+        Stroke.Thickness = 1
+    end
+
+    if tool.TextureId ~= "" then
+        local Icon = Instance.new("ImageLabel")
+        Icon.Size = UDim2.new(0.9, 0, 0.9, 0)
+        Icon.Position = UDim2.new(0.05, 0, 0.05, 0)
+        Icon.BackgroundTransparency = 1
+        Icon.Image = tool.TextureId
+        Icon.Parent = Slot
+    else
+        local Name = Instance.new("TextLabel")
+        Name.Size = UDim2.new(1, 0, 1, 0)
+        Name.BackgroundTransparency = 1
+        -- Cortamos a 5 letras para que no se salga del cuadro
+        Name.Text = string.sub(tool.Name, 1, 5) 
+        Name.TextColor3 = Color3.new(1, 1, 1)
+        Name.TextScaled = true
+        Name.Font = Enum.Font.GothamBold
+        Name.Parent = Slot
+    end
+    
+    return Slot
+end
+
+-- 3. EL MOTOR ESCÁNER
+RunService.RenderStepped:Connect(function()
+    -- Si lo apagas, oculta todo rápido
+    if not _G.VisualInv_Enabled then
+        for _, data in pairs(InvGuis) do
+            if data.Bill then data.Bill.Enabled = false end
+        end
+        return
+    end
+
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer then
+            local Char = plr.Character
+            -- Checamos que esté 100% vivo y completo
+            local isAlive = Char and Char:FindFirstChild("HumanoidRootPart") and Char:FindFirstChild("Head") and Char:FindFirstChild("Humanoid") and Char.Humanoid.Health > 0
+            
+            if isAlive then
+                -- CREAR BILLBOARD SI NO EXISTE
+                if not InvGuis[plr] then
+                    local Bill = Instance.new("BillboardGui")
+                    Bill.Name = "Inv_" .. plr.Name
+                    Bill.AlwaysOnTop = true
+                    Bill.Size = UDim2.new(6, 0, 1, 0)
+                    Bill.StudsOffset = Vector3.new(0, 3.5, 0) -- Altura
+                    Bill.MaxDistance = 200 -- Rango de visión
+                    
+                    -- [[ EL FIX SUPREMO ]]: Se guarda en TU pantalla, no en el enemigo
+                    Bill.Parent = GetMasterFolder()
+                    
+                    local Container = Instance.new("Frame")
+                    Container.Size = UDim2.new(1, 0, 1, 0)
+                    Container.BackgroundTransparency = 1
+                    Container.Parent = Bill
+                    
+                    local Layout = Instance.new("UIListLayout")
+                    Layout.FillDirection = Enum.FillDirection.Horizontal
+                    Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+                    Layout.VerticalAlignment = Enum.VerticalAlignment.Center
+                    Layout.Padding = UDim.new(0, 4)
+                    Layout.Parent = Container
+
+                    InvGuis[plr] = {Bill = Bill, Container = Container, LastUpdate = 0}
+                end
+
+                local GUI = InvGuis[plr]
+                
+                -- [[ ADORNEE LÁSER ]]: Pegamos el GUI a su cabeza virtualmente
+                GUI.Bill.Adornee = Char.Head
+                GUI.Bill.Enabled = true
+
+                -- ACTUALIZAR MOCHILA CADA 0.5 SEGUNDOS (Anti-Lag para varios enemigos)
+                if tick() - GUI.LastUpdate > 0.5 then
+                    GUI.LastUpdate = tick()
+                    
+                    -- Borrar cuadros viejos
+                    for _, child in pairs(GUI.Container:GetChildren()) do
+                        if child:IsA("Frame") then child:Destroy() end
+                    end
+
+                    local TColor = plr.TeamColor and plr.TeamColor.Color or Color3.new(1, 0, 0) -- Rojo por defecto si no hay equipo
+
+                    -- 1. ARMA EN MANO
+                    local Equipped = Char:FindFirstChildWhichIsA("Tool")
+                    if Equipped then
+                        CreateSlot(Equipped, GUI.Container, true, TColor)
+                    end
+
+                    -- 2. ARMAS GUARDADAS
+                    local Backpack = plr:FindFirstChild("Backpack")
+                    if Backpack then
+                        local Count = 0
+                        for _, Item in pairs(Backpack:GetChildren()) do
+                            if Item:IsA("Tool") then
+                                CreateSlot(Item, GUI.Container, false, TColor)
+                                Count = Count + 1
+                                if Count >= 4 then break end -- Máximo 4 para no tapar toda la pantalla
+                            end
+                        end
+                    end
+                end
+            else
+                -- SI MUERE, OCULTAMOS Y DESPEGAMOS EL LÁSER (Pero no borramos el GUI)
+                if InvGuis[plr] then 
+                    InvGuis[plr].Bill.Enabled = false 
+                    InvGuis[plr].Bill.Adornee = nil
+                end
+            end
+        end
+    end
+end)
+
+-- Si el jugador se sale del server, ahí sí borramos su GUI para no gastar memoria
+Players.PlayerRemoving:Connect(RemoveGUI)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- [[ Z-SLX: MOTOR FlyZ (BYPASS FÍSICO INDEPENDIENTE) ]]
+task.spawn(function()
+    local p = game.Players.LocalPlayer
+    local runService = game:GetService("RunService")
+    local active = false
+    local bv, bg 
+    
+    local PlayerControl
+    pcall(function()
+        PlayerControl = require(p.PlayerScripts:WaitForChild("PlayerModule")):GetControls()
+    end)
+
+    runService.RenderStepped:Connect(function()
+        local char = p.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+
+        -- Solo responde a FlyZ
+        if _G.FlyZ_Enabled and hrp and hum and hum.Health > 0 then
+            if not active then
+                active = true
+                hum.PlatformStand = true
+                
+                -- BYPASS DE NOMBRES ALEATORIOS
+                bv = Instance.new("BodyVelocity")
+                bv.Name = "FlyZ_Vel_" .. math.random(100, 999)
+                bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+                bv.Velocity = Vector3.new(0, 0, 0)
+                bv.Parent = hrp
+                
+                bg = Instance.new("BodyGyro")
+                bg.Name = "FlyZ_Gyro_" .. math.random(100, 999)
+                bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+                bg.P = 9e4
+                bg.CFrame = hrp.CFrame
+                bg.Parent = hrp
+            end
+
+            local cam = workspace.CurrentCamera
+            local speed = _G.FlyZ_Speed or 50
+            local moveVector = PlayerControl:GetMoveVector()
+
+            if moveVector.Magnitude > 0 then
+                local direction = (cam.CFrame.LookVector * -moveVector.Z) + (cam.CFrame.RightVector * moveVector.X)
+                bv.Velocity = direction * speed
+            else
+                bv.Velocity = Vector3.new(0, 0, 0)
+            end
+            
+            bg.CFrame = cam.CFrame
+
+            -- Noclip compatible con FlyZ
+            local canCollideState = not (_G.Noclip_Enabled or false)
+            for _, part in pairs(char:GetChildren()) do
+                if part:IsA("BasePart") then part.CanCollide = canCollideState end
+            end
+        else
+            if active then
+                active = false
+                if hum then
+                    hum.PlatformStand = false
+                    hum:ChangeState(Enum.HumanoidStateType.GettingUp)
+                end
+                if bv then bv:Destroy() end
+                if bg then bg:Destroy() end
+            end
+        end
+    end)
+end)
+
+
+
+-- Speed
+
+
+
+-- MOTOR DE VELOCIDAD (Aparte del código de la UI)
+task.spawn(function()
+    while task.wait() do
+        pcall(function()
+            local LP = game:GetService("Players").LocalPlayer
+            if LP.Character and LP.Character:FindFirstChild("Humanoid") then
+                local Hum = LP.Character.Humanoid
+                
+                if _G.SpeedZ_Enabled then
+                    -- Si está activado, fuerza la velocidad de tu Global
+                    Hum.WalkSpeed = _G.SpeedZ_Value
+                else
+                    -- Si lo apagas, regresa a la velocidad normal de Roblox
+                    if Hum.WalkSpeed ~= 16 then
+                        Hum.WalkSpeed = 16
+                    end
+                end
+            end
+        end)
+    end
+end)
