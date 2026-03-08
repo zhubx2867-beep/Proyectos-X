@@ -1065,7 +1065,7 @@ local SectionRtx = TabBypass:CreateSection(" <-- -------------------------------
 
 
 
-local SectionFlyZ = TabBypass:CreateSection("Fly (Los Mochis, Mexico) ✈️")
+local SectionFlyZ = TabBypass:CreateSection("Fly (Rancheria, Nuevo leon) ✈️")
 
     _G.FlyZ_Enabled = false
     _G.FlyZ_Speed = 50
