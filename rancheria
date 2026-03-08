@@ -1108,7 +1108,7 @@ local SectionFlyZ = TabBypass:CreateSection("Fly (Rancheria, Nuevo leon) ✈️"
 
 
 
-local SectionSpeedZ = TabBypass:CreateSection("Speed (Los Mochis, Mexico) ⚡")
+local SectionSpeedZ = TabBypass:CreateSection("Speed (Rancheria, Nuevo leon) ⚡")
 
 _G.SpeedZ_Enabled = false
 _G.SpeedZ_Value = 50
